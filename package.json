@@ -1,7 +1,17 @@
 {
+  "type": "module",
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "json": "^11.0.0",
-    "json-server": "^0.17.4",
-    "server": "^1.0.38"
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2"
   }
 }
