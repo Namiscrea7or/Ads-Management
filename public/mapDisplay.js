@@ -1,9 +1,12 @@
 
 const map = L.map('map').setView([10.762835589385107, 106.67990747488228], 13);
-var geocoder = L.Control.Geocoder.nominatim();
+
+
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
+
+const geocoder = L.Control.Geocoder.nominatim();
 
 map.on('click', function (e) {
   var latlng = e.latlng;
@@ -22,6 +25,8 @@ map.on('click', function (e) {
     }
   });
 });
+
+
 
 function loadDataFromServer() {
   console.log('Loading data from server');
@@ -111,7 +116,10 @@ function hideDetails() {
 
 function initializeMap() {
   loadDataFromServer();
-  map.addControl(geocoder);
+  var control = L.Control.geocoder({
+    position: 'topright',
+    geocoder: geocoder
+  }).addTo(map);
 
   map.on('click', function (e) {
     var latlng = e.latlng;

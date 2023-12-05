@@ -1,9 +1,8 @@
-import express from 'express';
-import { engine } from 'express-handlebars';
-import path from 'path'
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const express = require('express');
+const { engine } = require('express-handlebars');
+const path = require('path');
+const { dirname } = require('path');
+const { fileURLToPath } = require('url');
 
 
 const app = express();
@@ -21,16 +20,14 @@ app.set('views', './views');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'models')));
 
-
-
-
 app.get('/', function (req, res) {
-  res.render('home', { title: 'Home Page'}); 
-})
+  res.render('home', { title: 'Home Page' });
+});
 
-
-
+app.get('/login', function (req, res) {
+  res.render('login', { title: 'Login' });
+});
 
 app.listen(3030, function serverStartedHandler() {
-  console.log('Web server is running at http://localhost:3000');
+  console.log('Web server is running at http://localhost:3030');
 });

@@ -1,3 +1,36 @@
+<nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Pricing</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown link
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">Phân Hệ Người Dân</a></li>
+            <li><a class="dropdown-item" href="#">Phân Hệ Cán Bộ Phường</a></li>
+            <li><a class="dropdown-item" href="#">Phân Hệ Cán Bộ Quận</a></li>
+            <li><a class="dropdown-item" href="#">Phân Hệ Cán Bộ Sở VH-TT</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/login">Login</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 <div id="map" style="height: 400px;"></div>
 <div id="details"></div>
 <button id="reportButton" style="display: none;">Báo cáo vi phạm</button>
@@ -35,16 +68,4 @@
   </div>
 
 </div>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-
-<!-- Thêm file mapDisplay.js -->
-<script type="module" src="/mapDisplay.js"></script>
-
 
