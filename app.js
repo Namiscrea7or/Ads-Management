@@ -1,18 +1,43 @@
 const express = require('express');
+const mongoose = require("mongoose");
+const cors = require("cors");
 const { engine } = require('express-handlebars');
 const path = require('path');
 const { dirname } = require('path');
 const { fileURLToPath } = require('url');
 
+require("dotenv").config();
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(
+      `mongodb+srv://${process.env.DB_PASSWORD}:${process.env.DB_PASSWORD}@cluster0.ofucss0.mongodb.net/?retryWrites=true&w=majority`,
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    console.log(`connected to db successfully`);
+  } catch (error) {
+    console.log(error);
+    console.log(`cannot connect to db`);
+  }
+};
+
+connectDB();
 
 const app = express();
+app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({
   extended: true
 }));
 
 app.engine('hbs', engine({
   extname: 'hbs',
-  defaultLayout: 'main'
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: path.join(__dirname, 'views/partials')
 }));
 app.set('view engine', 'hbs');
 app.set('views', './views');
@@ -26,6 +51,9 @@ app.get('/', function (req, res) {
 
 app.get('/login', function (req, res) {
   res.render('login', { title: 'Login' });
+});
+app.get('/register', function (req, res) {
+  res.render('register', { title: 'Register' });
 });
 
 app.listen(3030, function serverStartedHandler() {

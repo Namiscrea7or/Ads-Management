@@ -1,0 +1,5 @@
+express
+mongoose
+dot env
+argon2
+cors
