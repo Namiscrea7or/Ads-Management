@@ -1,6 +1,6 @@
 <div class="container mt-5">
   <h2>Login</h2>
-  <form>
+  <form id="loginForm">
     <div class="form-group">
       <label for="loginEmail">Email address</label>
       <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Enter email">
@@ -15,11 +15,4 @@
   </form>
 </div>
 
-<script>
-  function onClick(e) {
-    e.preventDefault();
-    grecaptcha.enterprise.ready(async () => {
-      const token = await grecaptcha.enterprise.execute('6LfJhiYpAAAAANuefy1JV8tln0zC-utdiSkux8W7', {action: 'login'});
-    });
-  }
-</script>
+<script type="module" src="/loginHandle.js"></script>

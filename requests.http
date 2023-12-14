@@ -1,0 +1,10 @@
+POST http://localhost:3030/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "nam6@gmail.com",
+    "password": "nam",
+    "full_name": "Phan Phước Hải Nam",
+    "phone_number": "0777777777",
+    "address": "Sài Gòn"
+}

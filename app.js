@@ -6,6 +6,8 @@ const path = require('path');
 const { dirname } = require('path');
 const { fileURLToPath } = require('url');
 
+const authRouter = require("./routes/auth");
+
 require("dotenv").config();
 
 const connectDB = async () => {
@@ -32,6 +34,7 @@ app.use(cors());
 app.use(express.urlencoded({
   extended: true
 }));
+app.use("/api/auth", authRouter);
 
 app.engine('hbs', engine({
   extname: 'hbs',

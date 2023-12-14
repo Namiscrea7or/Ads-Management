@@ -23,24 +23,9 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  birthday: {
-    type: Date,
-    required: true,
-  },
-  user_id: {
-    type: String,
-    required: true,
-  },
   role: {
     type: String,
-    enum: ["Guest", "Staff", "Business_Admin", "System_Admin"],
-  },
-  money: {
-    type: Number,
-  },
-  createAt: {
-    type: Date,
-    default: Date.now,
+    enum: ["Người Dân", "Cán bộ Phường", "Cán bộ Quận", "Cán bộ Sở"],
   },
 });
 

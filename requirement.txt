@@ -3,3 +3,5 @@ mongoose
 dot env
 argon2
 cors
+handlebars 
+nodemon
