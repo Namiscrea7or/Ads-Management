@@ -47,6 +47,7 @@ app.set('views', './views');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'models')));
+app.use(express.static(path.join(__dirname, 'controller')));
 
 app.get('/', function (req, res) {
   res.render('home', { title: 'Home Page' });

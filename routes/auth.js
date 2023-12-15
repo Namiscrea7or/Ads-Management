@@ -16,7 +16,7 @@ router.post("/register", async (req, res) => {
     password,
     full_name,
     phone_number,
-    address,
+    dob,
   } = req.body;
   // Simple validation
   if (!email || !password)
@@ -40,7 +40,7 @@ router.post("/register", async (req, res) => {
       role: "Người Dân",
 	    full_name,
 	    phone_number,
-	    address,
+	    dob: new Date,
     });
     await newUser.save();
 
@@ -98,7 +98,7 @@ router.post("/login", async (req, res) => {
       email: user.email,
       full_name: user.full_name,
       phone_number: user.phone_number,
-      address: user.address,
+      dob: user.dob,
       role: user.role,
       accessToken,
     });

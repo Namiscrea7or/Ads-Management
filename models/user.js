@@ -19,8 +19,8 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  address: {
-    type: String,
+  dob: {
+    type: Date,
     required: true,
   },
   role: {

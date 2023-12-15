@@ -6,7 +6,7 @@ if (registerForm) {
     const name = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
-    const address = document.getElementById('registerAddress').value;
+    const dob = document.getElementById('registerDob').value;
     const phoneNumber = document.getElementById('registerPhoneNumber').value;
 
     fetch('http://localhost:3030/api/auth/register', {
@@ -18,7 +18,7 @@ if (registerForm) {
             full_name: name,
             email: email,
             password: password,
-            address: address,
+            dob: dob,
             phone_number: phoneNumber,
         }),
     })
@@ -28,6 +28,7 @@ if (registerForm) {
     })
     .catch(error => {
         console.error('Error:', error);
+        alert('Error')
     });
   });
 } else {

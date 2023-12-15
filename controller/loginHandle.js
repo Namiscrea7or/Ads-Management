@@ -15,11 +15,12 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     })
     .then(response => response.json()) // Parse the JSON response
     .then(data => {
-        // Log the success response data to the console
         console.log('Success:', data);
+        localStorage.setItem('accessToken', data.accessToken);
+        window.location.href = '/';
     })
     .catch(error => {
-        // Log any errors that occur during the fetch or JSON parsing process
+        alert('Error')
         console.error('Error:', error);
     });
 });
