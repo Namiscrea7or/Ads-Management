@@ -60,6 +60,10 @@ app.get('/register', function (req, res) {
   res.render('register', { title: 'Register' });
 });
 
+app.get('/user', function (req, res) {
+  res.render('user', { title: 'User' });
+});
+
 app.listen(3030, function serverStartedHandler() {
   console.log('Web server is running at http://localhost:3030');
 });
