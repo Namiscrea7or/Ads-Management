@@ -10,26 +10,28 @@ if (registerForm) {
     const phoneNumber = document.getElementById('registerPhoneNumber').value;
 
     fetch('http://localhost:3030/api/auth/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            full_name: name,
-            email: email,
-            password: password,
-            dob: dob,
-            phone_number: phoneNumber,
-        }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        full_name: name,
+        email: email,
+        password: password,
+        dob: dob,
+        phone_number: phoneNumber,
+      }),
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         console.log('Success:', data);
-    })
-    .catch(error => {
+        localStorage.setItem('accessToken', 'Bearer ' + data.accessToken);
+        window.location.href = '/';
+      })
+      .catch(error => {
         console.error('Error:', error);
         alert('Error')
-    });
+      });
   });
 } else {
   console.error('registerForm is null or undefined.');

@@ -1,14 +1,14 @@
 const express = require('express');
-const mongoose = require("mongoose");
-const cors = require("cors");
+const mongoose = require('mongoose');
+const cors = require('cors');
 const { engine } = require('express-handlebars');
 const path = require('path');
-const { dirname } = require('path');
-const { fileURLToPath } = require('url');
+const authRouter = require('./controller/auth');
+const userRouter = require('./controller/user'); 
 
-const authRouter = require("./routes/auth");
 
-require("dotenv").config();
+
+require('dotenv').config();
 
 const connectDB = async () => {
   try {
@@ -31,10 +31,11 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(express.urlencoded({
-  extended: true
-}));
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+
 
 app.engine('hbs', engine({
   extname: 'hbs',
@@ -49,6 +50,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'models')));
 app.use(express.static(path.join(__dirname, 'controller')));
 
+
+
 app.get('/', function (req, res) {
   res.render('home', { title: 'Home Page' });
 });
@@ -60,9 +63,10 @@ app.get('/register', function (req, res) {
   res.render('register', { title: 'Register' });
 });
 
-app.get('/user', function (req, res) {
-  res.render('user', { title: 'User' });
+app.get('/user', (req, res) => {
+  res.render('user', { title: 'User Profile' });
 });
+
 
 app.listen(3030, function serverStartedHandler() {
   console.log('Web server is running at http://localhost:3030');

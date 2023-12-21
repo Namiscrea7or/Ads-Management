@@ -1,27 +1,37 @@
-// user.js
+const express = require("express");
+const router = express.Router();
+const argon2 = require("argon2");
+const verifyToken = require("../middlewave/auth");
+const User = require("../models/user");
 
-document.addEventListener('DOMContentLoaded', function () {
-    const userContent = document.getElementById('userContent');
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-        fetch('http://localhost:3030/api/user/info', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + accessToken,
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Hiển thị dữ liệu từ máy chủ trên trang
-            userContent.innerHTML = `<p>${data.message}</p>`;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            userContent.innerHTML = '<p>Error fetching data from the server</p>';
+router.get('/info', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findOne({ _id: req.userId });
+
+        if (!user) {
+            return res.status(200).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user: {
+                email: user.email,
+                full_name: user.full_name,
+                phone_number: user.phone_number,
+                dob: user.dob,
+                role: user.role,
+            }
         });
-    } else {
-        // Người dùng chưa đăng nhập, hiển thị thông báo hoặc chuyển hướng đến trang đăng nhập
-        userContent.innerHTML = '<p>You are not logged in. Please <a href="/login">login</a>.</p>';
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
     }
 });
+
+module.exports = router;

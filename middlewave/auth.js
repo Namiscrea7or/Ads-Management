@@ -8,7 +8,6 @@ const verifyToken = (req, res, next) => {
     return res
       .status(200)
       .json({ success: false, message: "Access token not found!" });
-      return res.redirect('/login');
 
   try {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

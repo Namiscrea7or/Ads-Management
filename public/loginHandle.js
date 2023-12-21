@@ -13,10 +13,10 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
             password: password,
         }),
     })
-    .then(response => response.json()) // Parse the JSON response
+    .then(response => response.json()) 
     .then(data => {
         console.log('Success:', data);
-        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('accessToken', 'Bearer ' + data.accessToken);
         window.location.href = '/';
     })
     .catch(error => {
