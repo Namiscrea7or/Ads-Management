@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const argon2 = require("argon2");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
         .json({ success: false, message: "email already taken" });
 
     // All good
-    const hashedPassword = await argon2.hash(password);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
         .status(400)
         .json({ success: false, message: "Incorrect email or password!" });
     //email found
-    const passwordValid = await argon2.verify(user.password, password);
+    const passwordValid = await bcrypt.compare(password, user.password);
     if (!passwordValid)
       return res
         .status(400)
@@ -106,5 +106,109 @@ router.post("/login", async (req, res) => {
   }
 });
 //======================================================================================================================
+
+// Dành cho việc đăng kí Cán bộ văn hoá thể thao, chỉ được phép đăng kí bên phía server
+router.post("/register_CBVHTT", async (req, res) => {
+  const {
+    email,
+    password,
+    full_name,
+    phone_number,
+    dob,
+  } = req.body;
+  // Simple validation
+  if (!email || !password)
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing email and/or password" });
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (user)
+      return res
+        .status(400)
+        .json({ success: false, message: "email already taken" });
+
+    // All good
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      role: "Cán bộ Sở",
+      full_name,
+	    phone_number,
+      dob
+    });
+    await newUser.save();
+    const accessToken = jwt.sign(
+      { userId: newUser._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    return res.json({
+      success: true,
+      message: "User created successfully",
+      accessToken,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+router.post("/register_CB", async (req, res) => {
+  const {
+    email,
+    password,
+    full_name,
+    phone_number,
+    role,
+    dob,
+  } = req.body;
+  // Simple validation
+  if (!email || !password)
+    return res
+      .status(400)
+      .json({ success: false, message: "Missing email and/or password" });
+  try {
+    const user = await User.findOne({ email: email });
+
+    if (user)
+      return res
+        .status(400)
+        .json({ success: false, message: "email already taken" });
+
+    // All good
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      role,
+      full_name,
+	    phone_number,
+      dob
+    });
+    await newUser.save();
+    const accessToken = jwt.sign(
+      { userId: newUser._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    return res.json({
+      success: true,
+      message: "User created successfully",
+      accessToken,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
 
 module.exports = router;

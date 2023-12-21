@@ -1,7 +1,7 @@
 express
 mongoose
 dot env
-argon2
+bcrypt
 cors
 handlebars 
 nodemon

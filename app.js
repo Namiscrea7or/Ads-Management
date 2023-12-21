@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const { engine } = require('express-handlebars');
 const path = require('path');
-const authRouter = require('./controller/auth');
-const userRouter = require('./controller/user'); 
+const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user'); 
 
 
 
@@ -30,8 +30,9 @@ connectDB();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);

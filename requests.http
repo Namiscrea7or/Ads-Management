@@ -5,6 +5,7 @@ Content-Type: application/json
     "email": "nam6@gmail.com",
     "password": "nam",
     "full_name": "Phan Phước Hải Nam",
+    "dob": "2003-11-31",
     "phone_number": "0777777777",
     "address": "Sài Gòn"
 }
@@ -21,3 +22,16 @@ Content-Type: application/json
 ###
 GET http://localhost:3030/api/user/info
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTgxNGQ4ZDYyMzU3OGUzZWQyYjA2YjUiLCJpYXQiOjE3MDI5NzI4MTN9.liNpRKL8k8vSL5PRnQk7_sw6bgM8wFhdmDeg7Bpl6Xg 
+
+###
+POST http://localhost:3030/api/auth//register_CBVHTT
+Content-Type: application/json
+
+{
+    "email": "cbvhtt@gmail.com",
+    "password": "cbvhtt",
+    "full_name": "Phan Phước Hải Nam",
+    "dob": "2003-11-31",
+    "phone_number": "113",
+    "address": "Sài Gòn"
+}
