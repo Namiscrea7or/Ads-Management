@@ -1,12 +1,17 @@
 
 const map = L.map('map').setView([10.762835589385107, 106.67990747488228], 13);
 
+const userRole = localStorage.getItem('userRole')
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
 const geocoder = L.Control.Geocoder.nominatim();
+
+var button = document.createElement('button');
+button.style.display = 'none'; // Initially hide the button
+document.body.appendChild(button);
 
 map.on('click', function (e) {
   var latlng = e.latlng;
@@ -22,9 +27,31 @@ map.on('click', function (e) {
       // Hiển thị thông tin bảng quảng cáo (thay thế bằng logic hiển thị thông tin từ dữ liệu của bạn)
       var locationData = { name: 'Tên địa điểm', address: address, /* ... các thông tin khác ... */ };
       detailWhenClick(locationData);
+
+      // Check user role
+      if (userRole === 'Cán bộ Sở') {
+        // Update button properties
+        button.innerHTML = 'Your Button Text';
+        button.style.display = 'block'; // Show the button
+
+        // Remove previous click event listener to avoid multiple bindings
+        button.removeEventListener('click', previousClickListener);
+
+        // Add an event listener to the button
+        button.addEventListener('click', function () {
+          // Your button click logic goes here
+          console.log('Button clicked for location:', locationData);
+          // Hide the button after click
+          button.style.display = 'none';
+        });
+
+        // Save the current click event listener to remove it later
+        var previousClickListener = button.addEventListener('click', function () {});
+      }
     }
   });
 });
+
 
 
 

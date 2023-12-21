@@ -1,3 +1,5 @@
+import { setUser, getUser } from './userModule.js';
+
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -17,7 +19,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     .then(data => {
         console.log('Success:', data);
         localStorage.setItem('accessToken', 'Bearer ' + data.accessToken);
-        window.location.href = '/';
+        window.location.href = '/user';
     })
     .catch(error => {
         alert('Error')

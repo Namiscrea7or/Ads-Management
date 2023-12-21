@@ -37,6 +37,7 @@ function handleSuccess(response) {
   if (response.success) {
     console.log(response);
     renderUserInfo(response.user);
+    localStorage.setItem('userRole', response.user.role);
   } else {
     console.log('error');
     console.error('Error from server:', response.error);
