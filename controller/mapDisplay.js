@@ -1,4 +1,3 @@
-
 const map = L.map('map').setView([10.762835589385107, 106.67990747488228], 13);
 
 const userRole = localStorage.getItem('userRole')
@@ -10,50 +9,106 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const geocoder = L.Control.Geocoder.nominatim();
 
 var button = document.createElement('button');
-button.style.display = 'none'; // Initially hide the button
+button.style.display = 'none';
 document.body.appendChild(button);
 
 map.on('click', function (e) {
   var latlng = e.latlng;
 
-  // Sử dụng geocoder để lấy địa chỉ từ tọa độ
   geocoder.reverse(latlng, map.options.crs.scale(map.getZoom()), function (results) {
+    console.log(results);
+
     if (results.length > 0) {
-      var address = results[0].name; // Lấy tên đường, quận huyện, thành phố, v.v.
+      var address = results[0].name;
+      var { ward, district } = extractAddressInfo(address);
 
-      // Hiển thị thông tin địa chỉ
+      var latitude = latlng.lat;
+      var longitude = latlng.lng;
+
       console.log('Địa chỉ:', address);
+      console.log('Quận:', district);
+      console.log('Phường:', ward);
+      console.log('Latitude:', latitude);
+      console.log('Longitude:', longitude);
 
-      // Hiển thị thông tin bảng quảng cáo (thay thế bằng logic hiển thị thông tin từ dữ liệu của bạn)
-      var locationData = { name: 'Tên địa điểm', address: address, /* ... các thông tin khác ... */ };
+      var locationData = {
+        name: 'Tên địa điểm',
+        address: address,
+        district: district,
+        ward: ward,
+        latitude: latitude,
+        longitude: longitude
+      };
       detailWhenClick(locationData);
 
-      // Check user role
       if (userRole === 'Cán bộ Sở') {
-        // Update button properties
         button.innerHTML = 'Your Button Text';
-        button.style.display = 'block'; // Show the button
+        button.style.display = 'block';
 
-        // Remove previous click event listener to avoid multiple bindings
         button.removeEventListener('click', previousClickListener);
 
-        // Add an event listener to the button
         button.addEventListener('click', function () {
-          // Your button click logic goes here
           console.log('Button clicked for location:', locationData);
-          // Hide the button after click
-          button.style.display = 'none';
+          showReportForm(locationData);
         });
 
-        // Save the current click event listener to remove it later
         var previousClickListener = button.addEventListener('click', function () {});
       }
     }
   });
 });
 
+function extractAddressInfo(address) {
+  var parts = address.split(',');
+  var ward = '';
+  var district = '';
 
+  for (var i = 0; i < parts.length; i++) {
+    var part = parts[i].trim();
 
+    if (part.includes('Ward') || part.includes('Phường')) {
+      ward = part.replace(/(Ward|Phường)/i, '').trim();
+    }
+
+    if (part.includes('District') || part.includes('Quận')) {
+      district = part.replace(/(District|Quận)/i, '').trim();
+    }
+  }
+
+  return { ward, district };
+}
+
+function showReportForm(locationData) {
+  var formHTML = `<form id="reportForm">
+                    <label for="reportDescription">Report Description:</label>
+                    <textarea id="reportDescription" name="reportDescription" required></textarea>
+                    <label for="adType">Advertising Type:</label>
+                    <select id="adType" name="adType" required>
+                      <option value="Cổ động chính trị">Cổ động chính trị</option>
+                      <option value="Quảng cáo thương mại">Quảng cáo thương mại</option>
+                      <option value="Xã hội hoá">Xã hội hoá</option>
+                    </select>
+                    <label for="locationType">Location Type:</label>
+                    <select id="locationType" name="locationType" required>
+                      <option value="Đất công">Đất công</option>
+                      <option value="Đất tư nhân">Đất tư nhân</option>
+                      <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+                      <option value="Chợ">Chợ</option>
+                      <option value="Cây xăng">Cây xăng</option>
+                      <option value="Nhà chờ xe buýt">Nhà chờ xe buýt</option>
+                    </select>
+                    <label for="latitude">Latitude:</label>
+                    <input type="text" id="latitude" name="latitude" value="${locationData.latitude}" readonly>
+                    <label for="longitude">Longitude:</label>
+                    <input type="text" id="longitude" name="longitude" value="${locationData.longitude}" readonly>
+                    <input type="hidden" id="reportedAddress" name="reportedAddress" value="${locationData.address}">
+                    <input type="hidden" id="reportedWard" name="reportedWard" value="${locationData.ward || ''}">
+                    <input type="hidden" id="reportedDistrict" name="reportedDistrict" value="${locationData.district || ''}">
+                    <button type="submit">Submit Report</button>
+                 </form>`;
+
+  $('#details').append(formHTML);
+}
 
 function loadDataFromServer() {
   console.log('Loading data from server');
@@ -71,7 +126,7 @@ function loadDataFromServer() {
   });
 }
 
-var detailsVisible = false; // Biến để kiểm tra trạng thái hiển thị/ẩn details
+var detailsVisible = false;
 
 function updateMapWithMarkers(data) {
   console.log('Updating map with markers:', data);
@@ -123,23 +178,15 @@ function showDetails(location) {
 }
 
 function detailWhenClick(location) {
-  // hàm xử lý thông tin khi click
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
-                     <p><strong>Địa chỉ:</strong> ${location.address}</p>
-                     <!-- ... Các thông tin khác ... -->`;
+                     <p><strong>Địa chỉ:</strong> ${location.address}</p>`;
   $('#details').html(detailsHTML);
-
-  // Hiển thị form báo cáo
 }
 
 function hideDetails() {
-  // Ẩn thông tin chi tiết
   $('#details').html('');
-
-  // Đặt trạng thái hiển thị/ẩn thành false
   detailsVisible = false;
 }
-
 
 function initializeMap() {
   loadDataFromServer();

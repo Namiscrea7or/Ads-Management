@@ -18,12 +18,12 @@ const adsMarkerSchema = new Schema({
   },
   locationType: {
     type: String,
-    enum: ["PublicLand", "PrivateLand", "CommercialCenter", "Market", "GasStation", "BusStop"],
+    enum: ["Đất công", "Đất tư nhân", "Trung tâm thương mại", "Chợ", "Cây xăng", "Nhà chờ xe buýt"],
     required: true,
   },
   adType: {
     type: String,
-    enum: ["PoliticalCampaign", "CommercialAdvertising", "SocialCampaign"],
+    enum: ["Cổ động chính trị", "Quảng cáo thương mại", "Xã hội hoá"],
     required: true,
   },
   image: {
@@ -34,12 +34,14 @@ const adsMarkerSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  billboards: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Billboard",
-    },
-  ],
+  latitude: {
+    type: Int16Array,
+    required: true,
+  },
+  longitude: {
+    type: Int16Array,
+    required: true,
+  }
 });
 
 module.exports = mongoose.model("adsMarker", adsMarkerSchema);
