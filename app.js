@@ -5,6 +5,7 @@ const { engine } = require('express-handlebars');
 const path = require('path');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user'); 
+const markerRouter = require('./routes/marker')
 
 
 
@@ -36,6 +37,7 @@ app.use(cors());
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/marker", markerRouter)
 
 
 app.engine('hbs', engine({

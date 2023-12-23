@@ -6,15 +6,13 @@ const adsMarkerSchema = new Schema({
     type: String,
     required: true,
   },
-  area: {
-    ward: {
-      type: String,
-      required: true,
-    },
-    district: {
-      type: String,
-      required: true,
-    },
+  ward: {
+    type: String,
+    required: true,
+  },
+  district: {
+    type: String,
+    required: true,
   },
   locationType: {
     type: String,
@@ -26,20 +24,20 @@ const adsMarkerSchema = new Schema({
     enum: ["Cổ động chính trị", "Quảng cáo thương mại", "Xã hội hoá"],
     required: true,
   },
-  image: {
-    type: String, 
-    required: true,
-  },
+  // image: {
+  //   type: Buffer, 
+  //   required: true,
+  // },
   planningStatus: {
     type: Boolean,
     required: true,
   },
   latitude: {
-    type: Int16Array,
+    type: Number,
     required: true,
   },
   longitude: {
-    type: Int16Array,
+    type: Number,
     required: true,
   }
 });

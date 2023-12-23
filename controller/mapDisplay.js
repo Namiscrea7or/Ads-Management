@@ -11,7 +11,7 @@ const geocoder = L.Control.Geocoder.nominatim();
 var button = document.createElement('button');
 button.style.display = 'none';
 document.body.appendChild(button);
-
+let checkBtn = false;
 map.on('click', function (e) {
   var latlng = e.latlng;
 
@@ -39,21 +39,34 @@ map.on('click', function (e) {
         latitude: latitude,
         longitude: longitude
       };
-      detailWhenClick(locationData);
+      var clickedOnMarker = false;
+      map.eachLayer(function (layer) {
+        if (layer instanceof L.Marker && layer.getLatLng().equals(latlng)) {
+          clickedOnMarker = true;
+        }
+      });
 
-      if (userRole === 'Cán bộ Sở') {
-        button.innerHTML = 'Your Button Text';
-        button.style.display = 'block';
-
-        button.removeEventListener('click', previousClickListener);
-
-        button.addEventListener('click', function () {
-          console.log('Button clicked for location:', locationData);
-          showReportForm(locationData);
-        });
-
-        var previousClickListener = button.addEventListener('click', function () {});
+      if (!clickedOnMarker) {
+        detailWhenClick(locationData);
+        if (userRole === 'Cán bộ Sở') {
+          var adsCheckButton = document.createElement('button');
+          adsCheckButton.innerHTML = 'Your Button Text';
+          if(checkBtn === false) {
+            document.body.appendChild(adsCheckButton);
+            checkBtn = true;
+          }
+      
+          adsCheckButton.addEventListener('click', function () {
+            console.log('Button clicked for location:', locationData);
+            showReportForm(locationData);
+            checkBtn = false;
+            document.body.removeChild(adsCheckButton);
+          });
+        }
       }
+      
+
+      
     }
   });
 });
@@ -79,9 +92,7 @@ function extractAddressInfo(address) {
 }
 
 function showReportForm(locationData) {
-  var formHTML = `<form id="reportForm">
-                    <label for="reportDescription">Report Description:</label>
-                    <textarea id="reportDescription" name="reportDescription" required></textarea>
+  var formHTML = `<form id="adsCheck">
                     <label for="adType">Advertising Type:</label>
                     <select id="adType" name="adType" required>
                       <option value="Cổ động chính trị">Cổ động chính trị</option>
@@ -101,30 +112,84 @@ function showReportForm(locationData) {
                     <input type="text" id="latitude" name="latitude" value="${locationData.latitude}" readonly>
                     <label for="longitude">Longitude:</label>
                     <input type="text" id="longitude" name="longitude" value="${locationData.longitude}" readonly>
+                    
+                    <label for="planningStatus">Đã quy hoạch chưa:</label>
+                    <select id="planningStatus" name="planningStatus" required>
+                      <option value="true">Yes</option>
+                      <option value="false">No</option>
+                    </select>
                     <input type="hidden" id="reportedAddress" name="reportedAddress" value="${locationData.address}">
                     <input type="hidden" id="reportedWard" name="reportedWard" value="${locationData.ward || ''}">
                     <input type="hidden" id="reportedDistrict" name="reportedDistrict" value="${locationData.district || ''}">
-                    <button type="submit">Submit Report</button>
+                    <button type="button" onclick="submitForm()">Submit</button>
                  </form>`;
-
   $('#details').append(formHTML);
 }
+
+
+window.submitForm = function () {
+  var accessToken = localStorage.getItem('accessToken');
+
+  if (!accessToken) {
+    console.error('Access token not available');
+    return;
+  }
+  // var imageInput = document.getElementById('image');
+  // var image = imageInput.files[0];
+  var locationData = {
+    adType: document.getElementById('adType').value,
+    locationType: document.getElementById('locationType').value,
+    latitude: document.getElementById('latitude').value,
+    longitude: document.getElementById('longitude').value,
+    address: document.getElementById('reportedAddress').value,
+    ward: document.getElementById('reportedWard').value,
+    district: document.getElementById('reportedDistrict').value,
+    planningStatus: document.getElementById('planningStatus').value,
+
+  };
+
+  console.log(locationData)
+
+  fetch('http://localhost:3030/api/marker/marker', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': accessToken,
+    },
+    body: JSON.stringify(locationData)
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      alert('Success');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Fail');
+    });
+};
+
+
+
 
 function loadDataFromServer() {
   console.log('Loading data from server');
   $.ajax({
-    url: '/data.json',
+    url: 'http://localhost:3030/api/marker/info',
     method: 'GET',
-    dataType: 'json',
+    headers: {
+      'Authorization': localStorage.getItem('accessToken'),
+    },
     success: function (data) {
       console.log('Data loaded successfully:', data);
-      updateMapWithMarkers(data);
+      updateMapWithMarkers(data.markerList);
     },
     error: function (error) {
       console.error('Error loading data:', error);
     }
   });
 }
+
 
 var detailsVisible = false;
 
@@ -141,7 +206,7 @@ function updateMapWithMarkers(data) {
 
     var marker = L.marker([location.latitude, location.longitude]).addTo(map);
 
-    marker.bindPopup(`<b>${location.name}</b><br>${location.address}`).on('click', function () {
+    marker.bindPopup(`<br>${location.address}`).on('click', function () {
       if (detailsVisible) {
         hideDetails();
       } else {
@@ -154,28 +219,37 @@ function updateMapWithMarkers(data) {
 function showDetails(location) {
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
                        <p><strong>Địa chỉ:</strong> ${location.address}</p>
-                       <p><strong>Khu vực:</strong> ${location.area}</p>
+                       <p><strong>Khu vực:</strong> Quận: ${location.ward}, Phường:${location.district}</p>
                        <p><strong>Loại vị trí:</strong> ${location.locationType}</p>
-                       <p><strong>Hình thức quảng cáo:</strong> ${location.advertisingType}</p>
-                       <p><strong>Thông tin quy hoạch:</strong> ${location.planned ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>
-                       <p><img src="${location.imagePath}" alt="${location.name}" style="max-width: 100%; height: auto;"></p>`;
+                       <p><strong>Loại quảng cáo:</strong> ${location.adType}</p>
+                       <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>
+                       `;
 
-  detailsHTML += `<h3>Thông tin Bảng Quảng Cáo</h3>`;
-  detailsHTML += `<ul>`;
-  location.billboards.forEach(function (billboard) {
-    detailsHTML += `<li>
+  // Kiểm tra xem có hình ảnh hay không
+  if (location.image) {
+    detailsHTML += `<p><strong>Hình ảnh:</strong> <img src="${location.image}" alt="${location.address}" style="max-width: 100%; height: auto;"></p>`;
+  }
+
+  // Kiểm tra xem có bảng quảng cáo hay không
+  if (location.billboards && location.billboards.length > 0) {
+    detailsHTML += `<h3>Thông tin Bảng Quảng Cáo</h3>`;
+    detailsHTML += `<ul>`;
+    location.billboards.forEach(function (billboard) {
+      detailsHTML += `<li>
                             <strong>Loại bảng:</strong> ${billboard.type}, 
                             <strong>Kích thước:</strong> ${billboard.size}, 
                             <strong>Ngày hết hạn:</strong> ${billboard.expirationDate}
                             <br>
-                            <img src="${billboard.image}" alt="${location.name}" style="max-width: 100%; height: auto;">
+                            <img src="${billboard.image}" alt="${location.address}" style="max-width: 100%; height: auto;">
                         </li>`;
-  });
-  detailsHTML += `</ul>`;
+    });
+    detailsHTML += `</ul>`;
+  }
 
   $('#details').html(detailsHTML);
   detailsVisible = true;
 }
+
 
 function detailWhenClick(location) {
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>

@@ -1,5 +1,3 @@
-import { setUser, getUser } from './userModule.js';
-
 document.getElementById('loginForm').addEventListener('submit', function (e) {
     e.preventDefault();
 

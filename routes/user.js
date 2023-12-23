@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const argon2 = require("argon2");
 const verifyToken = require("../middlewave/auth");
 const User = require("../models/user");
 
