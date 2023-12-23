@@ -8,9 +8,9 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const geocoder = L.Control.Geocoder.nominatim();
 
-var button = document.createElement('button');
-button.style.display = 'none';
-document.body.appendChild(button);
+var adsCheckButton = document.createElement('button');
+adsCheckButton.style.display = 'none';
+document.body.appendChild(adsCheckButton);
 let checkBtn = false;
 map.on('click', function (e) {
   var latlng = e.latlng;
@@ -49,10 +49,10 @@ map.on('click', function (e) {
       if (!clickedOnMarker) {
         detailWhenClick(locationData);
         if (userRole === 'Cán bộ Sở') {
-          var adsCheckButton = document.createElement('button');
-          adsCheckButton.innerHTML = 'Your Button Text';
+          adsCheckButton.style.display = 'block';
+          adsCheckButton.innerHTML = 'Tạo điểm quảng cáo';
           if(checkBtn === false) {
-            document.body.appendChild(adsCheckButton);
+            adsCheckButton.style.display = 'block';
             checkBtn = true;
           }
       
@@ -60,13 +60,10 @@ map.on('click', function (e) {
             console.log('Button clicked for location:', locationData);
             showReportForm(locationData);
             checkBtn = false;
-            document.body.removeChild(adsCheckButton);
+            adsCheckButton.style.display = 'none';
           });
         }
-      }
-      
-
-      
+      }    
     }
   });
 });
@@ -200,13 +197,22 @@ function updateMapWithMarkers(data) {
       map.removeLayer(layer);
     }
   });
-
+  let rpBtnState = false;
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
 
     var marker = L.marker([location.latitude, location.longitude]).addTo(map);
 
     marker.bindPopup(`<br>${location.address}`).on('click', function () {
+      if(rpBtnState === false) {
+        $('#reportButton').css('display', 'block');
+        rpBtnState = true;
+      }
+      else {
+        $('#reportButton').css('display', 'none');
+        rpBtnState = false;
+      }
+      adsCheckButton.style.display = 'none';
       if (detailsVisible) {
         hideDetails();
       } else {
