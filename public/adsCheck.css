@@ -1,4 +1,4 @@
-#adsCheck {
+.adsCheck {
     max-width: 400px;
     margin: 20px;
     padding: 20px;
@@ -7,20 +7,20 @@
     border-radius: 8px;
   }
   
-  #adsCheck label {
+  .adsCheck label {
     display: block;
     margin-bottom: 8px;
   }
   
-  #adsCheck select,
-  #adsCheck input[type="text"] {
+  .adsCheck select,
+  .adsCheck input[type="text"] {
     width: 100%;
     padding: 8px;
     margin-bottom: 16px;
     box-sizing: border-box;
   }
   
-  #adsCheck button {
+  .adsCheck button {
     background-color: #4caf50;
     color: white;
     padding: 10px 15px;
@@ -29,7 +29,7 @@
     cursor: pointer;
   }
   
-  #adsCheck button:hover {
+  .adsCheck button:hover {
     background-color: #45a049;
   }
   

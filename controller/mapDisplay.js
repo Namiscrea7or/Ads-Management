@@ -51,11 +51,11 @@ map.on('click', function (e) {
         if (userRole === 'Cán bộ Sở') {
           adsCheckButton.style.display = 'block';
           adsCheckButton.innerHTML = 'Tạo điểm quảng cáo';
-          if(checkBtn === false) {
+          if (checkBtn === false) {
             adsCheckButton.style.display = 'block';
             checkBtn = true;
           }
-      
+
           adsCheckButton.addEventListener('click', function () {
             console.log('Button clicked for location:', locationData);
             showReportForm(locationData);
@@ -63,7 +63,7 @@ map.on('click', function (e) {
             adsCheckButton.style.display = 'none';
           });
         }
-      }    
+      }
     }
   });
 });
@@ -89,7 +89,7 @@ function extractAddressInfo(address) {
 }
 
 function showReportForm(locationData) {
-  var formHTML = `<form id="adsCheck">
+  var formHTML = `<form class="adsCheck">
                     <label for="adType">Advertising Type:</label>
                     <select id="adType" name="adType" required>
                       <option value="Cổ động chính trị">Cổ động chính trị</option>
@@ -198,13 +198,16 @@ function updateMapWithMarkers(data) {
     }
   });
   let rpBtnState = false;
+  var BbButton = document.createElement('button');
+  document.body.appendChild(BbButton);
+  BbButton.innerHTML = 'Tạo bảng quảng cáo';
+  BbButton.style.display = 'none';
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
 
     var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-
     marker.bindPopup(`<br>${location.address}`).on('click', function () {
-      if(rpBtnState === false) {
+      if (rpBtnState === false) {
         $('#reportButton').css('display', 'block');
         rpBtnState = true;
       }
@@ -215,12 +218,49 @@ function updateMapWithMarkers(data) {
       adsCheckButton.style.display = 'none';
       if (detailsVisible) {
         hideDetails();
+        BbButton.style.display = 'none';
       } else {
         showDetails(location);
+        if (!(location.billboards && location.billboards.length > 0)) {
+          BbButton.style.display = 'block';
+          BbButton.addEventListener('click', function () {
+            console.log('Button clicked for location:', location);
+            billboardDetail(location);
+            BbButton.style.display = 'none';
+          });
+        }
       }
     });
   });
 }
+
+function billboardDetail(location) {
+  const billBoardFormHtml = `<form class="adsCheck">
+                              <label for="type">Billboard Type:</label>
+                              <select id="type" name="type" required>
+                                <option value="Trụ bảng hiflex">Trụ bảng hiflex</option>
+                                <option value="Trụ màn hình điện tử LED">Trụ màn hình điện tử LED</option>
+                                <option value="Trụ hộp đèn">Trụ hộp đèn</option>
+                                <option value="Bảng hiflex ốp tường">Bảng hiflex ốp tường</option>
+                                <option value="Màn hình điện tử ốp tường">Màn hình điện tử ốp tường</option>
+                                <option value="Trụ treo băng rôn dọc">Trụ treo băng rôn dọc</option>
+                                <option value="Trụ treo băng rôn ngang">Trụ treo băng rôn ngang</option>
+                                <option value="Trụ/Cụm pano">Trụ/Cụm pano</option>
+                                <option value="Cổng chào">Cổng chào</option>
+                                <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+                              </select>
+
+                              <label for="size">Size:</label>
+                              <input type="text" id="size" name="size" required>
+
+                              <label for="date">Date:</label>
+                              <input type="date" id="date" name="date">
+
+                              <button type="submit">Submit</button>
+                            </form>`;
+  $('#details').append(billBoardFormHtml);
+}
+
 
 function showDetails(location) {
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
@@ -295,7 +335,7 @@ $(document).ready(function () {
     $('#reportForm').hide();
     $('#reportButton').css('display', 'none');
   });
-  
+
 
   $('#reportButton').click(function () {
     $('#reportForm').toggle();

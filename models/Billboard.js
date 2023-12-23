@@ -14,6 +14,7 @@ const BillboardSchema = new Schema({
     date: {
       type: Date
     }
+  
   });
   
   module.exports = mongoose.model("Billboard", BillboardSchema);

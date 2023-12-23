@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Billboard = require("./Billboard");
 
 const adsMarkerSchema = new Schema({
   address: {
@@ -39,7 +40,12 @@ const adsMarkerSchema = new Schema({
   longitude: {
     type: Number,
     required: true,
-  }
+  },
+  billboards: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Billboard',
+    required: false,
+  },
 });
 
 module.exports = mongoose.model("adsMarker", adsMarkerSchema);
