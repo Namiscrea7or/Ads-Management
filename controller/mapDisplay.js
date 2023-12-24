@@ -193,14 +193,16 @@ function updateMapWithMarkers(data) {
         showDetails(location);
         if (location.planningStatus === true) {
           if (!(location.billboards && location.billboards.length > 0)) {
-            // Check if the location doesn't have billboards
-            BbButton.style.display = 'block';
+            if (userRole === 'Cán bộ Sở') {
+              BbButton.style.display = 'block';
+            }
             BbButton.addEventListener('click', function () {
               console.log('Button clicked for location:', location);
               // Remove the previous billboard form before adding a new one
               if (currentBillboardForm) {
                 currentBillboardForm.remove();
               }
+
               billboardDetail(location);
               BbButton.style.display = 'none';
             });
