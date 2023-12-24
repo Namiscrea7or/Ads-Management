@@ -52,32 +52,32 @@ router.post('/marker', verifyToken, async (req, res) => {
 });
 
 router.get('/info', verifyToken, async (req, res) => {
-    try {
-        const markers = await Marker.find();
-        const markerList = markers.map((marker) => ({
-            address: marker.address,
-            ward: marker.ward,
-            district: marker.district,
-            locationType: marker.locationType,
-            adType: marker.adType,
-            // image,
-            planningStatus: marker.planningStatus,
-            latitude: marker.latitude,
-            longitude: marker.longitude,
-            billboards: marker.billboards
-        }))
-        res.json({
-            success:true,
-            markerList: markerList
-        })
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
-    }
-});
+  try {
+    const markers = await Marker.find().populate('billboards');
+    const markerList = markers.map((marker) => ({
+      address: marker.address,
+      ward: marker.ward,
+      district: marker.district,
+      locationType: marker.locationType,
+      adType: marker.adType,
+      planningStatus: marker.planningStatus,
+      latitude: marker.latitude,
+      longitude: marker.longitude,
+      // Lấy thông tin của Billboard từ field populated
+      billboards: marker.billboards,
+    }));
 
+    res.json({
+      success: true,
+      markerList: markerList,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
 
 module.exports = router;

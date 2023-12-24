@@ -8,10 +8,19 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const geocoder = L.Control.Geocoder.nominatim();
 
+
+
+var BbButton = document.createElement('button');
+document.body.appendChild(BbButton);
+BbButton.innerHTML = 'Tạo bảng quảng cáo';
+BbButton.style.display = 'none';
+
+
 var adsCheckButton = document.createElement('button');
 adsCheckButton.style.display = 'none';
 document.body.appendChild(adsCheckButton);
 let checkBtn = false;
+var adsCheckForm = null;
 map.on('click', function (e) {
   var latlng = e.latlng;
 
@@ -55,10 +64,12 @@ map.on('click', function (e) {
             adsCheckButton.style.display = 'block';
             checkBtn = true;
           }
-
           adsCheckButton.addEventListener('click', function () {
             console.log('Button clicked for location:', locationData);
-            showReportForm(locationData);
+            if (adsCheckForm) {
+              adsCheckForm.remove();
+            }
+            adsCheckForm = showReportForm(locationData);
             checkBtn = false;
             adsCheckButton.style.display = 'none';
           });
@@ -121,6 +132,7 @@ function showReportForm(locationData) {
                     <button type="button" onclick="submitForm()">Submit</button>
                  </form>`;
   $('#details').append(formHTML);
+  return $('#details').find('form');
 }
 
 
@@ -147,6 +159,10 @@ function loadDataFromServer() {
 
 var detailsVisible = false;
 
+
+// Variable to store the current billboard form
+var currentBillboardForm = null;
+
 function updateMapWithMarkers(data) {
   console.log('Updating map with markers:', data);
   map.eachLayer(function (layer) {
@@ -154,11 +170,9 @@ function updateMapWithMarkers(data) {
       map.removeLayer(layer);
     }
   });
+
   let rpBtnState = false;
-  var BbButton = document.createElement('button');
-  document.body.appendChild(BbButton);
-  BbButton.innerHTML = 'Tạo bảng quảng cáo';
-  BbButton.style.display = 'none';
+
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
 
@@ -167,8 +181,7 @@ function updateMapWithMarkers(data) {
       if (rpBtnState === false) {
         $('#reportButton').css('display', 'block');
         rpBtnState = true;
-      }
-      else {
+      } else {
         $('#reportButton').css('display', 'none');
         rpBtnState = false;
       }
@@ -178,21 +191,31 @@ function updateMapWithMarkers(data) {
         BbButton.style.display = 'none';
       } else {
         showDetails(location);
-        if (!(location.billboards && location.billboards.length > 0)) {
-          BbButton.style.display = 'block';
-          BbButton.addEventListener('click', function () {
-            console.log('Button clicked for location:', location);
-            billboardDetail(location);
+        if (location.planningStatus === true) {
+          if (!(location.billboards && location.billboards.length > 0)) {
+            // Check if the location doesn't have billboards
+            BbButton.style.display = 'block';
+            BbButton.addEventListener('click', function () {
+              console.log('Button clicked for location:', location);
+              // Remove the previous billboard form before adding a new one
+              if (currentBillboardForm) {
+                currentBillboardForm.remove();
+              }
+              billboardDetail(location);
+              BbButton.style.display = 'none';
+            });
+          }
+          else {
             BbButton.style.display = 'none';
-          });
+          }
         }
       }
     });
   });
 }
-
 function billboardDetail(location) {
   const billBoardFormHtml = `<form class="adsCheck">
+                              <input type="hidden" id="reportedBBAddress" name="reportedAddress" value="${location.address}">
                               <label for="type">Billboard Type:</label>
                               <select id="bbType" name="type" required>
                                 <option value="Trụ bảng hiflex">Trụ bảng hiflex</option>
@@ -213,9 +236,11 @@ function billboardDetail(location) {
                               <label for="date">Date:</label>
                               <input type="date" id="bbDate" name="date">
 
-                              <button type="submit" onclick = "submitBBForm(location)">Submit</button>
+                              <button type="submit" onclick = "submitBBForm()">Submit</button>
                             </form>`;
   $('#details').append(billBoardFormHtml);
+  // Update the current billboard form reference
+  currentBillboardForm = $('#details').find('form');
 }
 
 
@@ -225,8 +250,7 @@ function showDetails(location) {
                        <p><strong>Khu vực:</strong> Quận: ${location.ward}, Phường:${location.district}</p>
                        <p><strong>Loại vị trí:</strong> ${location.locationType}</p>
                        <p><strong>Loại quảng cáo:</strong> ${location.adType}</p>
-                       <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>
-                       `;
+                       <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>`;
 
   // Kiểm tra xem có hình ảnh hay không
   if (location.image) {
@@ -234,24 +258,23 @@ function showDetails(location) {
   }
 
   // Kiểm tra xem có bảng quảng cáo hay không
-  if (location.billboards && location.billboards.length > 0) {
+  if (location.billboards) {
     detailsHTML += `<h3>Thông tin Bảng Quảng Cáo</h3>`;
     detailsHTML += `<ul>`;
-
     detailsHTML += `<li>
-                            <strong>Loại bảng:</strong> ${location.billboards.type}, 
-                            <strong>Kích thước:</strong> ${location.billboards.size}, 
-                            <strong>Ngày hết hạn:</strong> ${location.billboards.expirationDate}
-                            <br>
-                            <img src="${location.billboards.image}" alt="${location.billboards.address}" style="max-width: 100%; height: auto;">
-                        </li>`;
-
+                      <strong>Loại bảng:</strong> ${location.billboards.type}, 
+                      <strong>Kích thước:</strong> ${location.billboards.size}, 
+                      <strong>Ngày hết hạn:</strong> ${location.billboards.date}
+                      <br>
+                      <img src="${location.billboards.image}" alt="${location.billboards.address}" style="max-width: 100%; height: auto;">
+                  </li>`;
     detailsHTML += `</ul>`;
   }
 
   $('#details').html(detailsHTML);
   detailsVisible = true;
 }
+
 
 
 function detailWhenClick(location) {
@@ -284,14 +307,7 @@ function initializeMap() {
 $(document).ready(function () {
   $('#reportForm').hide();
 
-  map.on('popupopen', function () {
-    $('#reportButton').css('display', 'block');
-  });
 
-  map.on('popupclose', function () {
-    $('#reportForm').hide();
-    $('#reportButton').css('display', 'none');
-  });
 
 
   $('#reportButton').click(function () {

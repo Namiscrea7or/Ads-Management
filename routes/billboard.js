@@ -13,22 +13,15 @@ router.post('/billboard', verifyToken, async (req, res) => {
     } = req.body;
 
     try {
-
-
         const newBillboard = new Billboard({
             type,
             size,
             date
         });
-
-
         await newBillboard.save();
-
-        const markerToUpdate = await Marker.findOne({ address });
+        const markerToUpdate = await Marker.findOne({ address:address });
         markerToUpdate.billboards = newBillboard._id; 
         await markerToUpdate.save();
-
-
         return res.json({
             success: true,
             message: "Assign Successfully",
