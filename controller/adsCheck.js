@@ -1,34 +1,25 @@
-
-document.addEventListener('DOMContentLoaded', function () {
-  var adsCheckForm = document.getElementById('adsCheck');
-
-  if (adsCheckForm) {
-    adsCheckForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      handleAdsCheckForm();
-    });
-  } else {
-    console.error('Form not found');
-  }
-});
-
-function handleAdsCheckForm() {
+window.submitForm = function () {
   var accessToken = localStorage.getItem('accessToken');
 
   if (!accessToken) {
     console.error('Access token not available');
     return;
   }
-
-  var formData = {
+  // var imageInput = document.getElementById('image');
+  // var image = imageInput.files[0];
+  var locationData = {
     adType: document.getElementById('adType').value,
     locationType: document.getElementById('locationType').value,
     latitude: document.getElementById('latitude').value,
     longitude: document.getElementById('longitude').value,
-    reportedAddress: document.getElementById('reportedAddress').value,
-    reportedWard: document.getElementById('reportedWard').value,
-    reportedDistrict: document.getElementById('reportedDistrict').value,
+    address: document.getElementById('reportedAddress').value,
+    ward: document.getElementById('reportedWard').value,
+    district: document.getElementById('reportedDistrict').value,
+    planningStatus: document.getElementById('planningStatus').value,
+
   };
+
+  console.log(locationData)
 
   fetch('http://localhost:3030/api/marker/marker', {
     method: 'POST',
@@ -36,7 +27,7 @@ function handleAdsCheckForm() {
       'Content-Type': 'application/json',
       'Authorization': accessToken,
     },
-    body: JSON.stringify(formData),
+    body: JSON.stringify(locationData)
   })
     .then(response => response.json())
     .then(data => {
@@ -47,4 +38,4 @@ function handleAdsCheckForm() {
       console.error('Error:', error);
       alert('Fail');
     });
-}
+};

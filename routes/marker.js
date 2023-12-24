@@ -64,6 +64,7 @@ router.get('/info', verifyToken, async (req, res) => {
             planningStatus: marker.planningStatus,
             latitude: marker.latitude,
             longitude: marker.longitude,
+            billboards: marker.billboards
         }))
         res.json({
             success:true,

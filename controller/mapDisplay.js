@@ -124,49 +124,6 @@ function showReportForm(locationData) {
 }
 
 
-window.submitForm = function () {
-  var accessToken = localStorage.getItem('accessToken');
-
-  if (!accessToken) {
-    console.error('Access token not available');
-    return;
-  }
-  // var imageInput = document.getElementById('image');
-  // var image = imageInput.files[0];
-  var locationData = {
-    adType: document.getElementById('adType').value,
-    locationType: document.getElementById('locationType').value,
-    latitude: document.getElementById('latitude').value,
-    longitude: document.getElementById('longitude').value,
-    address: document.getElementById('reportedAddress').value,
-    ward: document.getElementById('reportedWard').value,
-    district: document.getElementById('reportedDistrict').value,
-    planningStatus: document.getElementById('planningStatus').value,
-
-  };
-
-  console.log(locationData)
-
-  fetch('http://localhost:3030/api/marker/marker', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': accessToken,
-    },
-    body: JSON.stringify(locationData)
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
-      alert('Success');
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Fail');
-    });
-};
-
-
 
 
 function loadDataFromServer() {
@@ -237,7 +194,7 @@ function updateMapWithMarkers(data) {
 function billboardDetail(location) {
   const billBoardFormHtml = `<form class="adsCheck">
                               <label for="type">Billboard Type:</label>
-                              <select id="type" name="type" required>
+                              <select id="bbType" name="type" required>
                                 <option value="Trụ bảng hiflex">Trụ bảng hiflex</option>
                                 <option value="Trụ màn hình điện tử LED">Trụ màn hình điện tử LED</option>
                                 <option value="Trụ hộp đèn">Trụ hộp đèn</option>
@@ -251,12 +208,12 @@ function billboardDetail(location) {
                               </select>
 
                               <label for="size">Size:</label>
-                              <input type="text" id="size" name="size" required>
+                              <input type="text" id="bbSize" name="size" required>
 
                               <label for="date">Date:</label>
-                              <input type="date" id="date" name="date">
+                              <input type="date" id="bbDate" name="date">
 
-                              <button type="submit">Submit</button>
+                              <button type="submit" onclick = "submitBBForm(location)">Submit</button>
                             </form>`;
   $('#details').append(billBoardFormHtml);
 }
@@ -280,15 +237,15 @@ function showDetails(location) {
   if (location.billboards && location.billboards.length > 0) {
     detailsHTML += `<h3>Thông tin Bảng Quảng Cáo</h3>`;
     detailsHTML += `<ul>`;
-    location.billboards.forEach(function (billboard) {
-      detailsHTML += `<li>
-                            <strong>Loại bảng:</strong> ${billboard.type}, 
-                            <strong>Kích thước:</strong> ${billboard.size}, 
-                            <strong>Ngày hết hạn:</strong> ${billboard.expirationDate}
+
+    detailsHTML += `<li>
+                            <strong>Loại bảng:</strong> ${location.billboards.type}, 
+                            <strong>Kích thước:</strong> ${location.billboards.size}, 
+                            <strong>Ngày hết hạn:</strong> ${location.billboards.expirationDate}
                             <br>
-                            <img src="${billboard.image}" alt="${location.address}" style="max-width: 100%; height: auto;">
+                            <img src="${location.billboards.image}" alt="${location.billboards.address}" style="max-width: 100%; height: auto;">
                         </li>`;
-    });
+
     detailsHTML += `</ul>`;
   }
 

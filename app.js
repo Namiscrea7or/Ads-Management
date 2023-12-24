@@ -6,6 +6,7 @@ const path = require('path');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user'); 
 const markerRouter = require('./routes/marker')
+const billboardRouter = require('./routes/billboard')
 
 
 
@@ -38,6 +39,7 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/marker", markerRouter)
+app.use("/api/billboard", billboardRouter);
 
 
 app.engine('hbs', engine({
