@@ -56,6 +56,8 @@ map.on('click', function (e) {
       });
 
       if (!clickedOnMarker) {
+        $('#reportButton').hide();
+        BbButton.style.display = 'none';
         detailWhenClick(locationData);
         if (userRole === 'Cán bộ Sở') {
           adsCheckButton.style.display = 'block';
