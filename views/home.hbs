@@ -13,10 +13,10 @@
   <form id="report">
     <label for="reportType">Hình thức báo cáo:</label>
     <select id="reportType" name="reportType">
-      <option value="ToGiacSaiPham">Tố giác sai phạm</option>
-      <option value="DangKyNoiDung">Đăng ký nội dung</option>
-      <option value="DongGopYKien">Đóng góp ý kiến</option>
-      <option value="GiaiDapThacMac">Giải đáp thắc mắc</option>
+      <option value="Tố giác sai phạm">Tố giác sai phạm</option>
+      <option value="Đăng ký nội dung">Đăng ký nội dung</option>
+      <option value="Đóng góp ý kiến">Đóng góp ý kiến</option>
+      <option value="Giải đáp thắc mắc">Giải đáp thắc mắc</option>
     </select><br>
 
     <label for="reporterName">Họ tên người báo cáo:</label>
@@ -31,10 +31,10 @@
     <label for="reportContent">Nội dung báo cáo:</label>
     <textarea id="reportContent" name="reportContent" required></textarea><br>
 
-    <label for="reportImage">Hình ảnh minh hoạ (tối đa 2 hình):</label>
+    {{!-- <label for="reportImage">Hình ảnh minh hoạ (tối đa 2 hình):</label>
     <input type="file" id="reportImage" name="reportImage" accept="image/*" multiple><br>
 
-    <div id="captcha"> <!-- Thêm cơ chế captcha tại đây --></div>
+    <div id="captcha"> <!-- Thêm cơ chế captcha tại đây --></div> --}}
 
     <button type="submit">Gửi Báo Cáo</button>
   </form>

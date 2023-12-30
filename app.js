@@ -7,6 +7,7 @@ const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user'); 
 const markerRouter = require('./routes/marker')
 const billboardRouter = require('./routes/billboard')
+const reportRouter = require('./routes/report')
 
 
 
@@ -40,6 +41,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/marker", markerRouter)
 app.use("/api/billboard", billboardRouter);
+app.use("/api/report", reportRouter);
 
 
 app.engine('hbs', engine({

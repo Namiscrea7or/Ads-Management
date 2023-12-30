@@ -8,19 +8,18 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const geocoder = L.Control.Geocoder.nominatim();
 
-
-
 var BbButton = document.createElement('button');
 document.body.appendChild(BbButton);
 BbButton.innerHTML = 'Tạo bảng quảng cáo';
 BbButton.style.display = 'none';
-
 
 var adsCheckButton = document.createElement('button');
 adsCheckButton.style.display = 'none';
 document.body.appendChild(adsCheckButton);
 let checkBtn = false;
 var adsCheckForm = null;
+var currentLocation = null;
+
 map.on('click', function (e) {
   var latlng = e.latlng;
 
@@ -48,6 +47,8 @@ map.on('click', function (e) {
         latitude: latitude,
         longitude: longitude
       };
+      currentLocation = locationData.address;
+      console.log('địa chỉ hiện tại: ', currentLocation);
       var clickedOnMarker = false;
       map.eachLayer(function (layer) {
         if (layer instanceof L.Marker && layer.getLatLng().equals(latlng)) {
@@ -137,9 +138,6 @@ function showReportForm(locationData) {
   return $('#details').find('form');
 }
 
-
-
-
 function loadDataFromServer() {
   console.log('Loading data from server');
   $.ajax({
@@ -158,9 +156,7 @@ function loadDataFromServer() {
   });
 }
 
-
 var detailsVisible = false;
-
 
 // Variable to store the current billboard form
 var currentBillboardForm = null;
@@ -180,6 +176,8 @@ function updateMapWithMarkers(data) {
 
     var marker = L.marker([location.latitude, location.longitude]).addTo(map);
     marker.bindPopup(`<br>${location.address}`).on('click', function () {
+      currentLocation = location.address;
+      console.log('địa chỉ hiện tại: ', currentLocation);
       if (rpBtnState === false) {
         $('#reportButton').css('display', 'block');
         rpBtnState = true;
@@ -217,6 +215,7 @@ function updateMapWithMarkers(data) {
     });
   });
 }
+
 function billboardDetail(location) {
   const billBoardFormHtml = `<form class="adsCheck">
                               <input type="hidden" id="reportedBBAddress" name="reportedAddress" value="${location.address}">
@@ -240,13 +239,12 @@ function billboardDetail(location) {
                               <label for="date">Date:</label>
                               <input type="date" id="bbDate" name="date">
 
-                              <button type="submit" onclick = "submitBBForm()">Submit</button>
+                              <button type="submit" onclick="submitBBForm()">Submit</button>
                             </form>`;
   $('#details').append(billBoardFormHtml);
   // Update the current billboard form reference
   currentBillboardForm = $('#details').find('form');
 }
-
 
 function showDetails(location) {
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
@@ -279,8 +277,6 @@ function showDetails(location) {
   detailsVisible = true;
 }
 
-
-
 function detailWhenClick(location) {
   var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
                      <p><strong>Địa chỉ:</strong> ${location.address}</p>`;
@@ -311,19 +307,49 @@ function initializeMap() {
 $(document).ready(function () {
   $('#reportForm').hide();
 
-
-
-
   $('#reportButton').click(function () {
     $('#reportForm').toggle();
   });
 
   $('#report').submit(function (e) {
     e.preventDefault();
-    sendReport();
     $('#reportForm').hide();
     $('#reportButton').css('display', 'none');
+    submitForm();
   });
 
   initializeMap();
 });
+
+function submitForm() {
+  console.log('địa chỉ hiện tại: ', currentLocation);
+  const address = currentLocation;
+  const reportType = document.getElementById('reportType').value;
+  const reporterName = document.getElementById('reporterName').value;
+  const reporterEmail = document.getElementById('reporterEmail').value;
+  const reporterPhone = document.getElementById('reporterPhone').value;
+  const reportContent = document.getElementById('reportContent').value;
+  fetch('http://localhost:3030/api/report/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      address: address,
+      reportType: reportType,
+      reporterName: reporterName,
+      reporterEmail: reporterEmail,
+      reporterPhone: reporterPhone,
+      reportContent: reportContent
+    }),
+  })
+  .then(response => response.json()) 
+  .then(data => {
+      console.log('Success:', data);
+      alert('success')
+  })
+  .catch(error => {
+      alert('Error')
+      console.error('Error:', error);
+  });
+}
