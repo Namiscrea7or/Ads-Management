@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middlewave/auth");
 const Report = require("../models/Report");
+const User = require("../models/user")
 
 router.post('/create', async (req, res) => {
     const {
@@ -37,5 +38,43 @@ router.post('/create', async (req, res) => {
             message: "Internal server error",
         });
     }
+});
+
+router.get('/info', verifyToken, async (req, res) => {
+    try {
+        const sys_ad = await User.findOne({ _id: req.userId });
+        if (!sys_ad)
+          return res.status(200).json({
+            success: false,
+            message: "Cán bộ văn hoá thể thao không tìm thấy",
+          });
+
+          if (sys_ad.role != "Cán bộ Sở")
+          return res.status(200).json({
+            success: false,
+            message: "Access denied!",
+          });
+    
+        const reports = await Report.find();
+        if (reports.length === 0) {
+          return res.json({ success: true, message: "There are no reports in report list" });
+        }
+        const allReports = reports.map(report => ({
+            address: report.address,
+            reportType: report.reportType,
+            reporterName: report.reporterName,
+            reporterEmail: report.reporterEmail,
+            reporterPhone: report.reporterPhone,
+            reportContent: report.reportContent
+        }));
+    
+        return res.json({ success: true, reports: allReports });
+      } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+          success: false,
+          message: "Internal server error",
+        });
+      }
 });
 module.exports = router;

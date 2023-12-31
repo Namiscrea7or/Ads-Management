@@ -73,6 +73,9 @@ app.get('/register', function (req, res) {
 app.get('/user', (req, res) => {
   res.render('user', { title: 'User Profile' });
 });
+app.get('/report', function (req, res) {
+  res.render('report', { title: 'Report' });
+});
 
 
 app.listen(3030, function serverStartedHandler() {
