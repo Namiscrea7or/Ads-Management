@@ -59,3 +59,65 @@
     transform: scale(0.9); 
     box-shadow: none; 
 }
+
+
+
+.horizontal-pagination {
+    display: flex;
+    align-items: center;
+}
+
+#prev-page, #next-page {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#prev-page:hover, #next-page:hover {
+    background-color: #ccc;
+}
+
+#prev-page:disabled, #next-page:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Style for the page numbers container */
+.page-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+/* Style for the page number */
+.page-number {
+    padding: 8px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Active page style */
+.page-number.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
+
+.page-number {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px; 
+    cursor: pointer;
+}
+
+
+.page-number.active {
+    background-color: #007bff;
+    color: #fff;
+}

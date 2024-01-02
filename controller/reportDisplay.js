@@ -1,5 +1,28 @@
 const accessToken = localStorage.getItem('accessToken');
 const role = localStorage.getItem('userRole');
+const itemsPerPage = 2;
+let currentPage = 1;
+let reports = [];
+
+
+
+
+document.getElementById('pagination').addEventListener('click', (event) => {
+    if (event.target.id === 'prev-page' && currentPage > 1) {
+        currentPage--;
+        renderReportInfo(reports);
+    } else if (event.target.classList.contains('page-number')) {
+        currentPage = parseInt(event.target.textContent, 10);
+        renderReportInfo(reports);
+    } else if (event.target.id === 'next-page') {
+        const totalPages = Math.ceil(reports.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderReportInfo(reports);
+        }
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function () {
     console.log('Access Token:', accessToken);
 
@@ -37,7 +60,8 @@ function handleResponse(response) {
 function handleSuccess(response) {
     if (response.success) {
         console.log(response);
-        renderReportInfo(response.reports);
+        reports = response.reports;
+        renderReportInfo(reports);
     } else {
         console.log('error');
         console.error('Error from server:', response.message);
@@ -46,15 +70,25 @@ function handleSuccess(response) {
 
 function handleError(error) {
     console.error('Error fetching user information:', error.message);
-
 }
+
+
+
+
+
+
 
 function renderReportInfo(reports) {
     const contentContainer = document.getElementById('content-container');
     const userDetailsElement = document.getElementById('user-details');
     const additionalActionsElement = document.getElementById('additional-actions');
+    const paginationElement = document.getElementById('pagination');
 
-    const html = reports.map(report => `
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const reportsToDisplay = reports.slice(startIndex, endIndex);
+
+    const html = reportsToDisplay.map(report => `
         <div class="report-item">
             <div>
                 <p><strong>Address:</strong> ${report.address}</p>
@@ -72,6 +106,21 @@ function renderReportInfo(reports) {
     `).join('');
 
     userDetailsElement.innerHTML = html;
-    contentContainer.style.display = 'block'; // Display the content container
-    // Additional actions code remains the same
+
+    const prevPageButton = paginationElement.querySelector('#prev-page');
+    const nextPageButton = paginationElement.querySelector('#next-page');
+    const pageNumbersContainer = paginationElement.querySelector('.page-numbers');
+
+    prevPageButton.style.display = currentPage > 1 ? 'inline-block' : 'none';
+    nextPageButton.style.display = currentPage < Math.ceil(reports.length / itemsPerPage) ? 'inline-block' : 'none';
+
+    const totalPages = Math.ceil(reports.length / itemsPerPage);
+    const paginationHtml = Array.from({ length: totalPages }, (_, index) => {
+        const pageNumber = index + 1;
+        return `<span class="page-number ${pageNumber === currentPage ? 'active' : ''}">${pageNumber}</span>`;
+    }).join('');
+
+    pageNumbersContainer.innerHTML = paginationHtml;
+
+    contentContainer.style.display = 'block';
 }
