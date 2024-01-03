@@ -77,4 +77,57 @@ router.get('/info', verifyToken, async (req, res) => {
         });
       }
 });
+
+router.put("/update_report", verifyToken, async (req, res) => {
+  console.log('gọi api thành công')
+  try {
+    const sys_ad = await User.findById(req.userId);
+
+    if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied!",
+      });
+    }
+
+    const { address, reportType, reporterName, reporterEmail, reporterPhone, reportContent } = req.body;
+    if (!address || !reportType || !reporterName || !reporterEmail || !reporterPhone || !reportContent) {
+      return res.status(200).json({
+        success: false,
+        message: "Invalid or missing information!",
+      });
+    }
+
+    const updatedReport = {
+      address, reportType, reporterName, reporterEmail, reporterPhone, reportContent
+    };
+
+    const reportUpdatePrice = { address };
+    const isUpdatedRp = await Report.findOneAndUpdate(
+      reportUpdatePrice,
+      updatedReport,
+      { new: true }
+    );
+
+    if (!isUpdatedRp) {
+      return res.status(200).json({
+        success: false,
+        message: "RP not found!",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Rp updated successfully",
+      updatedReport,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 module.exports = router;

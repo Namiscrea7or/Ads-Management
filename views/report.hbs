@@ -1,16 +1,31 @@
-  <link rel="stylesheet" href="/reportDisplay.css">
+<link rel="stylesheet" href="/reportDisplay.css">
 
 <div id="content-container">
-    <div id="user-details"></div>
-    <div id="additional-actions"></div>
+  <div id="user-details"></div>
+  <div class="edit-form" style="display: none;">
+    <h3>Edit Form</h3>
+    <label for="edit-report-type">Report Type:</label>
+    <select id="edit-report-type" name="edit-report-type">
+      <option value="Tố giác sai phạm">Tố giác sai phạm</option>
+      <option value="Đăng ký nội dung">Đăng ký nội dung</option>
+      <option value="Đóng góp ý kiến">Đóng góp ý kiến</option>
+      <option value="Giải đáp thắc mắc">Giải đáp thắc mắc</option>
+    </select>
 
-    <div id="pagination" class="horizontal-pagination">
+    <label for="edit-report-content">Report Content:</label>
+    <textarea id="edit-report-content"></textarea>
+
+    <button class="save-edit">Lưu</button>
+  </div>
+
+
+  <div id="pagination" class="horizontal-pagination">
     <button id="prev-page">Previous Page</button>
     <div class="page-numbers"></div>
     <button id="next-page">Next Page</button>
-</div>
+  </div>
 
 </div>
 
 
-  <script type="module" src="/reportDisplay.js"></script>
+<script type="module" src="/reportDisplay.js"></script>

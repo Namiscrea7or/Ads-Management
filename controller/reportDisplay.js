@@ -4,9 +4,6 @@ const itemsPerPage = 2;
 let currentPage = 1;
 let reports = [];
 
-
-
-
 document.getElementById('pagination').addEventListener('click', (event) => {
     if (event.target.id === 'prev-page' && currentPage > 1) {
         currentPage--;
@@ -30,8 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Access token not found in localStorage.');
         return;
     }
-    if (role === 'Cán bộ Sở')
+
+    if (role === 'Cán bộ Sở') {
         fetchUserInfo(accessToken);
+    }
 });
 
 function fetchUserInfo(accessToken) {
@@ -41,9 +40,9 @@ function fetchUserInfo(accessToken) {
             'Authorization': accessToken
         },
     })
-        .then(handleResponse)
-        .then(handleSuccess)
-        .catch(handleError);
+    .then(handleResponse)
+    .then(handleSuccess)
+    .catch(handleError);
 }
 
 function handleResponse(response) {
@@ -72,12 +71,6 @@ function handleError(error) {
     console.error('Error fetching user information:', error.message);
 }
 
-
-
-
-
-
-
 function renderReportInfo(reports) {
     const contentContainer = document.getElementById('content-container');
     const userDetailsElement = document.getElementById('user-details');
@@ -88,7 +81,7 @@ function renderReportInfo(reports) {
     const endIndex = startIndex + itemsPerPage;
     const reportsToDisplay = reports.slice(startIndex, endIndex);
 
-    const html = reportsToDisplay.map(report => `
+    const html = reportsToDisplay.map((report, index) => `
         <div class="report-item">
             <div>
                 <p><strong>Address:</strong> ${report.address}</p>
@@ -99,7 +92,7 @@ function renderReportInfo(reports) {
                 <p><strong>Report Content:</strong> ${report.reportContent}</p>
             </div>
             <div class="button">
-                <button class="edit-button">Sửa</button>
+                <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
                 <button class="delete-button">Xoá</button>
             </div>
         </div>
@@ -123,4 +116,61 @@ function renderReportInfo(reports) {
     pageNumbersContainer.innerHTML = paginationHtml;
 
     contentContainer.style.display = 'block';
+
+    attachEditButtonListeners();
 }
+
+function attachEditButtonListeners() {
+    const editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach((editButton) => {
+        editButton.addEventListener('click', () => {
+            const reportIndex = parseInt(editButton.getAttribute('data-index'), 10);
+            showEditForm(reports[reportIndex], reportIndex);
+        });
+    });
+}
+
+
+function showEditForm(report, index) {
+    const editForm = document.querySelector('.edit-form');
+    editForm.querySelector('#edit-report-type').value = report.reportType;
+    editForm.querySelector('#edit-report-content').value = report.reportContent;
+
+    editForm.style.display = 'block';
+
+    const saveButton = editForm.querySelector('.save-edit');
+    saveButton.addEventListener('click', () => {
+        saveEditedReport(report, index);
+    });
+}
+
+function saveEditedReport(report, index) {
+    const editForm = document.querySelector('.edit-form');
+    
+    const updatedReport = {
+        address: report.address,
+        reportType: editForm.querySelector('#edit-report-type').value,
+        reporterName: report.reporterName,
+        reporterEmail: report.reporterEmail,
+        reporterPhone: report.reporterPhone,
+        reportContent: editForm.querySelector('#edit-report-content').value,
+    };
+
+    console.log(updatedReport);
+
+    fetch(`http://localhost:3030/api/report/update_report`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken,
+        },
+        body: JSON.stringify(updatedReport),
+    })
+    .then(handleResponse)
+    .then(() => {
+        editForm.style.display = 'none';
+        fetchUserInfo(accessToken);
+    })
+    .catch(handleError);
+}
+
