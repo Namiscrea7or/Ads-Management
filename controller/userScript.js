@@ -65,11 +65,17 @@ function renderUserInfo(user) {
     const additionalActionsHtml = `
       <button id="createDistrictOfficerBtn">Tạo cán bộ phường</button>
       <button id="createWardOfficerBtn">Tạo cán bộ quận</button>
+      <button id="manageCBP">Quản lí Cán bộ Phường</button>
+      <button id="manageCBQ">Quản lí Cán bộ Quận</button>
+      <button id = "manageGuest">Quản lí người dân</button>
     `;
     additionalActionsElement.innerHTML = additionalActionsHtml;
 
     document.getElementById('createDistrictOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Phường'));
     document.getElementById('createWardOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Quận'));
+    document.getElementById('manageCBP').addEventListener('click', () => showWardOfficers());
+    document.getElementById('manageCBQ').addEventListener('click', () => showDistrictOfficers());
+    document.getElementById('manageGuest').addEventListener('click', () => showGuests());
   }
 }
 
@@ -144,4 +150,109 @@ function createDistrictOfficerAccount() {
 
 function createWardOfficerAccount() {
   console.log('Creating Ward Officer Account');
+}
+
+function showWardOfficers() {
+  fetch('http://localhost:3030/api/user/get_cbp_list', {
+      method: 'GET',
+      headers: {
+          'Authorization': accessToken
+      },
+  })
+      .then(handleResponse)
+      .then(handleWardOfficersSuccess)
+      .catch(handleError);
+}
+
+function handleWardOfficersSuccess(response) {
+  if (response.success) {
+      console.log(response);
+      renderWardOfficers(response.cbpList);
+  } else {
+      console.log('error');
+      console.error('Error from server:', response.error);
+  }
+}
+
+function renderWardOfficers(wardOfficers) {
+  const wardOfficersElement = document.getElementById('cbp');
+
+  const html = wardOfficers.map((officer) => `
+      <h2>${officer.full_name}</h2>
+      <p>Email: ${officer.email}</p>
+      <p>Phone Number: ${officer.phone_number}</p>
+      <p>Date of Birth: ${officer.dob} </p>
+  `).join('');
+
+  wardOfficersElement.innerHTML = html;
+}
+
+function showDistrictOfficers() {
+  fetch('http://localhost:3030/api/user/get_cbq_list', {
+    method: 'GET',
+    headers: {
+      'Authorization': accessToken
+    },
+  })
+    .then(handleResponse)
+    .then(handleDistrictOfficersSuccess)
+    .catch(handleError);
+}
+
+function handleDistrictOfficersSuccess(response) {
+  if (response.success) {
+    console.log(response);
+    renderDistrictOfficers(response.cbqList);
+  } else {
+    console.log('error');
+    console.error('Error from server:', response.error);
+  }
+}
+
+function renderDistrictOfficers(districtOfficers) {
+  const districtOfficersElement = document.getElementById('cbq');
+
+  const html = districtOfficers.map((officer) => `
+      <h2>${officer.full_name}</h2>
+      <p>Email: ${officer.email}</p>
+      <p>Phone Number: ${officer.phone_number}</p>
+      <p>Date of Birth: ${officer.dob} </p>
+  `).join('');
+
+  districtOfficersElement.innerHTML = html;
+}
+
+function showGuests() {
+  fetch('http://localhost:3030/api/user/get_guest_list', {
+    method: 'GET',
+    headers: {
+      'Authorization': accessToken
+    },
+  })
+    .then(handleResponse)
+    .then(handleGuestsSuccess)
+    .catch(handleError);
+}
+
+function handleGuestsSuccess(response) {
+  if (response.success) {
+    console.log(response);
+    renderGuests(response.guestList);
+  } else {
+    console.log('error');
+    console.error('Error from server:', response.error);
+  }
+}
+
+function renderGuests(guests) {
+  const guestsElement = document.getElementById('guests');
+
+  const html = guests.map((guest) => `
+      <h2>${guest.full_name}</h2>
+      <p>Email: ${guest.email}</p>
+      <p>Phone Number: ${guest.phone_number}</p>
+      <p>Date of Birth: ${guest.dob} </p>
+  `).join('');
+
+  guestsElement.innerHTML = html;
 }
