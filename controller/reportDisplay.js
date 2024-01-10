@@ -93,7 +93,7 @@ function renderReportInfo(reports) {
             </div>
             <div class="button">
                 <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
-                <button class="delete-button">Xoá</button>
+                <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
             </div>
         </div>
     `).join('');
@@ -118,6 +118,7 @@ function renderReportInfo(reports) {
     contentContainer.style.display = 'block';
 
     attachEditButtonListeners();
+    attachDeleteButtonListeners();
 }
 
 function attachEditButtonListeners() {
@@ -126,6 +127,21 @@ function attachEditButtonListeners() {
         editButton.addEventListener('click', () => {
             const reportIndex = parseInt(editButton.getAttribute('data-index'), 10);
             showEditForm(reports[reportIndex], reportIndex);
+        });
+    });
+}
+
+function attachDeleteButtonListeners() {
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    deleteButtons.forEach((deleteButton) => {
+        deleteButton.addEventListener('click', () => {
+            const reportIndex = parseInt(deleteButton.getAttribute('data-index'), 10);
+            const confirmation = confirm('Are you sure you want to delete this report?');
+            if (confirmation) {
+                console.log('có vô đây');
+                console.log('đây là ', reports[reportIndex].reportContent);
+                deleteReport(reports[reportIndex].reportContent, reportIndex);
+            }
         });
     });
 }
@@ -170,6 +186,32 @@ function saveEditedReport(report, index) {
     .then(() => {
         editForm.style.display = 'none';
         fetchUserInfo(accessToken);
+    })
+    .catch(handleError);
+}
+
+function deleteReport(reportContent, index) {
+    console.log('có đi vô hàm này')
+    if (!reports || !Array.isArray(reports) || reports.length === 0) {
+        console.error('Error: Reports array is not properly initialized.');
+        return;
+    }
+
+
+    fetch(`http://localhost:3030/api/report/${reportContent}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': accessToken,
+        },
+    })
+    .then(handleResponse)
+    .then((response) => {
+        if (response.success) {
+            reports.splice(index, 1);
+            location.reload();
+        } else {
+            console.error('Error deleting report:', response.message);
+        }
     })
     .catch(handleError);
 }

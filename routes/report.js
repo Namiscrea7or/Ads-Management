@@ -130,4 +130,40 @@ router.put("/update_report", verifyToken, async (req, res) => {
   }
 });
 
+router.delete("/:reportContent", verifyToken, async (req, res) => {
+  try {
+    const sys_ad = await User.findById(req.userId);
+
+    if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied!",
+      });
+    }
+
+    const deleteRp = await Report.findOneAndDelete({
+      reportContent: req.params.reportContent,
+    });
+
+    if (!deleteRp) {
+      return res.status(200).json({
+        success: false,
+        message: "Report not found!",
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Report deleted successfully",
+      deleteRp,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 module.exports = router;
