@@ -150,6 +150,93 @@ router.get('/get_guest_list', verifyToken, async (req, res) => {
     }
 });
 
+router.put("/update_user", verifyToken, async (req, res) => {
+    try {
+      const sys_ad = await User.findById(req.userId);
+  
+      if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied!",
+        });
+      }
+  
+      const { full_name, email, phone_number, dob, role } = req.body;
+      if (!full_name || !email || !phone_number || !dob || !role) {
+        return res.status(200).json({
+          success: false,
+          message: "Invalid or missing information!",
+        });
+      }
+  
+      const updatedUser = {
+        full_name, email, phone_number, dob, role
+      };
+  
+      const userUpdatePrice = { email };
+      const isUpdatedUser = await User.findOneAndUpdate(
+        userUpdatePrice,
+        updatedUser,
+        { new: true }
+      );
+  
+      if (!isUpdatedUser) {
+        return res.status(200).json({
+          success: false,
+          message: "User not found!",
+        });
+      }
+  
+      res.json({
+        success: true,
+        message: "User updated successfully",
+        updatedUser,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  });
+  
+  router.delete("/:email", verifyToken, async (req, res) => {
+    try {
+      const sys_ad = await User.findById(req.userId);
+  
+      if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied!",
+        });
+      }
+  
+      const deleteUser = await User.findOneAndDelete({
+        reportContent: req.params.email,
+      });
+  
+      if (!deleteUser) {
+        return res.status(200).json({
+          success: false,
+          message: "User not found!",
+        });
+      }
+  
+      return res.json({
+        success: true,
+        message: "User deleted successfully",
+        deleteUser,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  });
+
 
 
 module.exports = router;

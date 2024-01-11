@@ -15,16 +15,20 @@ document.addEventListener('DOMContentLoaded', function () {
   fetchUserInfo(accessToken);
 });
 
-function fetchUserInfo(accessToken) {
-  fetch('http://localhost:3030/api/user/info', {
-    method: 'GET',
-    headers: {
-      'Authorization': accessToken
-    },
-  })
-    .then(handleResponse)
-    .then(handleSuccess)
-    .catch(handleError);
+async function fetchUserInfo(accessToken) {
+  try {
+    const response = await fetch('http://localhost:3030/api/user/info', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
+
+    const data = await response.json();
+    handleSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 function handleResponse(response) {
@@ -35,6 +39,7 @@ function handleResponse(response) {
       throw new Error('Non-JSON response received.');
     });
   }
+
   return response.json();
 }
 
@@ -79,15 +84,15 @@ function renderUserInfo(user) {
     document.getElementById('createDistrictOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Phường'));
     document.getElementById('createWardOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Quận'));
     document.getElementById('manageCBP').addEventListener('click', () => {
-      clearOtherLists(); 
+      clearOtherLists();
       showWardOfficers();
     });
-    
+
     document.getElementById('manageCBQ').addEventListener('click', () => {
-      clearOtherLists(); 
+      clearOtherLists();
       showDistrictOfficers();
     });
-    
+
     document.getElementById('manageGuest').addEventListener('click', () => {
       clearOtherLists();
       showGuests();
@@ -183,16 +188,20 @@ function createWardOfficerAccount() {
   console.log('Creating Ward Officer Account');
 }
 
-function showWardOfficers() {
-  fetch('http://localhost:3030/api/user/get_cbp_list', {
-    method: 'GET',
-    headers: {
-      'Authorization': accessToken
-    },
-  })
-    .then(handleResponse)
-    .then(handleWardOfficersSuccess)
-    .catch(handleError);
+async function showWardOfficers() {
+  try {
+    const response = await fetch('http://localhost:3030/api/user/get_cbp_list', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
+
+    const data = await handleResponse(response);
+    handleWardOfficersSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 function handleWardOfficersSuccess(response) {
@@ -246,18 +255,23 @@ function renderWardOfficers(wardOfficers) {
       renderWardOfficers(wardOfficers);
     }
   });
+  attachEditButtonListeners(wardOfficers)
 }
 
-function showDistrictOfficers() {
-  fetch('http://localhost:3030/api/user/get_cbq_list', {
-    method: 'GET',
-    headers: {
-      'Authorization': accessToken
-    },
-  })
-    .then(handleResponse)
-    .then(handleDistrictOfficersSuccess)
-    .catch(handleError);
+async function showDistrictOfficers() {
+  try {
+    const response = await fetch('http://localhost:3030/api/user/get_cbq_list', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
+
+    const data = await handleResponse(response);
+    handleDistrictOfficersSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 function handleDistrictOfficersSuccess(response) {
@@ -311,18 +325,23 @@ function renderDistrictOfficers(districtOfficers) {
       renderDistrictOfficers(districtOfficers);
     }
   });
+  attachEditButtonListeners(districtOfficers)
 }
 
-function showGuests() {
-  fetch('http://localhost:3030/api/user/get_guest_list', {
-    method: 'GET',
-    headers: {
-      'Authorization': accessToken
-    },
-  })
-    .then(handleResponse)
-    .then(handleGuestsSuccess)
-    .catch(handleError);
+async function showGuests() {
+  try {
+    const response = await fetch('http://localhost:3030/api/user/get_guest_list', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
+
+    const data = await handleResponse(response);
+    handleGuestsSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
 }
 
 function handleGuestsSuccess(response) {
@@ -376,4 +395,71 @@ function renderGuests(guests) {
       renderGuests(guests);
     }
   });
+  attachEditButtonListeners(guests)
+}
+
+function attachEditButtonListeners(reports) {
+  const editButtons = document.querySelectorAll('.edit-button');
+  editButtons.forEach((editButton) => {
+    editButton.addEventListener('click', () => {
+      const reportIndex = parseInt(editButton.getAttribute('data-index'), 10);
+      showEditForm(reports[reportIndex], reportIndex);
+    });
+  });
+}
+
+function showEditForm(user, index) {
+  const editForm = document.querySelector('.edit-form');
+  console.log('Setting role:', user.role);
+  console.log('Setting full_name:', user.full_name);
+  console.log('Setting phone_number:', user.phone_number);
+  console.log('Setting dob:', user.dob);
+  editForm.querySelector('#role').value = user.role;
+  editForm.querySelector('#full_name').value = user.full_name;
+  editForm.querySelector('#phone').value = user.phone_number;
+  editForm.querySelector('#dob').value = user.dob;
+
+  editForm.style.display = 'block';
+
+  const saveButton = editForm.querySelector('.save-edit');
+  saveButton.addEventListener('click', () => {
+    saveEditedReport(user, index);
+  });
+}
+
+async function saveEditedReport(report, index) {
+  const editForm = document.querySelector('.edit-form');
+
+  const updatedUser = {
+    email: report.email,
+    role: editForm.querySelector('#role').value,
+    full_name: editForm.querySelector('#full_name').value,
+    phone_number: editForm.querySelector('#phone').value,
+    dob: editForm.querySelector('#dob').value,
+  };
+
+  console.log(updatedUser);
+
+  try {
+    const response = await fetch(`http://localhost:3030/api/user/update_user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      },
+      body: JSON.stringify(updatedUser),
+    });
+
+    const data = await handleResponse(response);
+    if (data.success) {
+      editForm.style.display = 'none';
+      location.reload();
+    }
+    else {
+      alert(data.message)
+      return;
+    }
+  } catch (error) {
+    handleError(error);
+  }
 }
