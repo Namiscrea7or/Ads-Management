@@ -1,4 +1,9 @@
 const accessToken = localStorage.getItem('accessToken');
+const itemsPerPage = 2;
+let currentPageCBP = 1;
+let currentPageCBQ = 1;
+let currentPageGuests = 1;
+
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Access Token:', accessToken);
 
@@ -73,10 +78,36 @@ function renderUserInfo(user) {
 
     document.getElementById('createDistrictOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Phường'));
     document.getElementById('createWardOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Quận'));
-    document.getElementById('manageCBP').addEventListener('click', () => showWardOfficers());
-    document.getElementById('manageCBQ').addEventListener('click', () => showDistrictOfficers());
-    document.getElementById('manageGuest').addEventListener('click', () => showGuests());
+    document.getElementById('manageCBP').addEventListener('click', () => {
+      clearOtherLists(); 
+      showWardOfficers();
+    });
+    
+    document.getElementById('manageCBQ').addEventListener('click', () => {
+      clearOtherLists(); 
+      showDistrictOfficers();
+    });
+    
+    document.getElementById('manageGuest').addEventListener('click', () => {
+      clearOtherLists();
+      showGuests();
+    });
   }
+}
+
+function clearOtherLists() {
+  const cbqElement = document.getElementById('cbq');
+  const cbpElement = document.getElementById('cbp');
+  const guestsElement = document.getElementById('guests');
+  const paginationCbp = document.getElementById('pagination-controls-cbp')
+  const paginationCbq = document.getElementById('pagination-controls-cbq')
+  const paginationGuest = document.getElementById('pagination-controls-guests')
+  paginationGuest.innerHTML = '';
+  paginationCbp.innerHTML = '';
+  paginationCbq.innerHTML = '';
+  cbqElement.innerHTML = '';
+  cbpElement.innerHTML = '';
+  guestsElement.innerHTML = '';
 }
 
 function showCreateAccountForm(role) {
@@ -125,7 +156,7 @@ function showCreateAccountForm(role) {
         full_name: formData.get('full_name'),
         phone_number: formData.get('phone_number'),
         dob: formData.get('dob'),
-        role: formData.get('role'), 
+        role: formData.get('role'),
       }),
     })
       .then(handleResponse)
@@ -154,37 +185,67 @@ function createWardOfficerAccount() {
 
 function showWardOfficers() {
   fetch('http://localhost:3030/api/user/get_cbp_list', {
-      method: 'GET',
-      headers: {
-          'Authorization': accessToken
-      },
+    method: 'GET',
+    headers: {
+      'Authorization': accessToken
+    },
   })
-      .then(handleResponse)
-      .then(handleWardOfficersSuccess)
-      .catch(handleError);
+    .then(handleResponse)
+    .then(handleWardOfficersSuccess)
+    .catch(handleError);
 }
 
 function handleWardOfficersSuccess(response) {
   if (response.success) {
-      console.log(response);
-      renderWardOfficers(response.cbpList);
+    console.log(response);
+    renderWardOfficers(response.cbpList);
   } else {
-      console.log('error');
-      console.error('Error from server:', response.error);
+    console.log('error');
+    console.error('Error from server:', response.error);
   }
 }
 
 function renderWardOfficers(wardOfficers) {
   const wardOfficersElement = document.getElementById('cbp');
+  const paginationControlsCBP = document.getElementById('pagination-controls-cbp');
 
-  const html = wardOfficers.map((officer) => `
+  paginationControlsCBP.innerHTML = `
+    <button id="prevPageCBP">Previous</button>
+    <span>Page ${currentPageCBP}</span>
+    <button id="nextPageCBP">Next</button>
+  `;
+
+  const startIndex = (currentPageCBP - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedWardOfficers = wardOfficers.slice(startIndex, endIndex);
+
+  const html = paginatedWardOfficers.map((officer, index) => `
       <h2>${officer.full_name}</h2>
       <p>Email: ${officer.email}</p>
       <p>Phone Number: ${officer.phone_number}</p>
       <p>Date of Birth: ${officer.dob} </p>
+      <div class="button">
+        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+      </div>
   `).join('');
 
   wardOfficersElement.innerHTML = html;
+
+  document.getElementById('prevPageCBP').addEventListener('click', () => {
+    if (currentPageCBP > 1) {
+      currentPageCBP--;
+      renderWardOfficers(wardOfficers);
+    }
+  });
+
+  document.getElementById('nextPageCBP').addEventListener('click', () => {
+    const totalPages = Math.ceil(wardOfficers.length / itemsPerPage);
+    if (currentPageCBP < totalPages) {
+      currentPageCBP++;
+      renderWardOfficers(wardOfficers);
+    }
+  });
 }
 
 function showDistrictOfficers() {
@@ -211,15 +272,45 @@ function handleDistrictOfficersSuccess(response) {
 
 function renderDistrictOfficers(districtOfficers) {
   const districtOfficersElement = document.getElementById('cbq');
+  const paginationControlsCBQ = document.getElementById('pagination-controls-cbq');
 
-  const html = districtOfficers.map((officer) => `
+  paginationControlsCBQ.innerHTML = `
+    <button id="prevPageCBQ">Previous</button>
+    <span>Page ${currentPageCBQ}</span>
+    <button id="nextPageCBQ">Next</button>
+  `;
+
+  const startIndex = (currentPageCBQ - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedDistrictOfficers = districtOfficers.slice(startIndex, endIndex);
+
+  const html = paginatedDistrictOfficers.map((officer, index) => `
       <h2>${officer.full_name}</h2>
       <p>Email: ${officer.email}</p>
       <p>Phone Number: ${officer.phone_number}</p>
       <p>Date of Birth: ${officer.dob} </p>
+      <div class="button">
+        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+      </div>
   `).join('');
 
   districtOfficersElement.innerHTML = html;
+
+  document.getElementById('prevPageCBQ').addEventListener('click', () => {
+    if (currentPageCBQ > 1) {
+      currentPageCBQ--;
+      renderDistrictOfficers(districtOfficers);
+    }
+  });
+
+  document.getElementById('nextPageCBQ').addEventListener('click', () => {
+    const totalPages = Math.ceil(districtOfficers.length / itemsPerPage);
+    if (currentPageCBQ < totalPages) {
+      currentPageCBQ++;
+      renderDistrictOfficers(districtOfficers);
+    }
+  });
 }
 
 function showGuests() {
@@ -246,13 +337,43 @@ function handleGuestsSuccess(response) {
 
 function renderGuests(guests) {
   const guestsElement = document.getElementById('guests');
+  const paginationControlsGuests = document.getElementById('pagination-controls-guests');
 
-  const html = guests.map((guest) => `
+  paginationControlsGuests.innerHTML = `
+    <button id="prevPageGuests">Previous</button>
+    <span>Page ${currentPageGuests}</span>
+    <button id="nextPageGuests">Next</button>
+  `;
+
+  const startIndex = (currentPageGuests - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedGuests = guests.slice(startIndex, endIndex);
+
+  const html = paginatedGuests.map((guest, index) => `
       <h2>${guest.full_name}</h2>
       <p>Email: ${guest.email}</p>
       <p>Phone Number: ${guest.phone_number}</p>
       <p>Date of Birth: ${guest.dob} </p>
+      <div class="button">
+        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+      </div>
   `).join('');
 
   guestsElement.innerHTML = html;
+
+  document.getElementById('prevPageGuests').addEventListener('click', () => {
+    if (currentPageGuests > 1) {
+      currentPageGuests--;
+      renderGuests(guests);
+    }
+  });
+
+  document.getElementById('nextPageGuests').addEventListener('click', () => {
+    const totalPages = Math.ceil(guests.length / itemsPerPage);
+    if (currentPageGuests < totalPages) {
+      currentPageGuests++;
+      renderGuests(guests);
+    }
+  });
 }
