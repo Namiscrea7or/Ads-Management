@@ -117,31 +117,136 @@ function clearOtherLists() {
 
 function showCreateAccountForm(role) {
   const formHtml = `
-    <form id="createAccountForm">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+  <form id="createAccountForm">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
 
-      <label for="full_name">Full Name:</label>
-      <input type="text" id="full_name" name="full_name" required>
+    <label for="full_name">Full Name:</label>
+    <input type="text" id="full_name" name="full_name" required>
 
-      <label for="phone_number">Phone Number:</label>
-      <input type="tel" id="phone_number" name="phone_number" required>
+    <label for="phone_number">Phone Number:</label>
+    <input type="tel" id="phone_number" name="phone_number" required>
 
-      <label for="dob">Date of Birth:</label>
-      <input type="date" id="dob" name="dob" required>
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
 
-      <label for="role">Role:</label>
-      <input type="text" id="role" name="role" value="${role}" disabled>
+    <div id="predefinedMap" style="display: none;"></div>
 
-      <input type="submit" value="Submit">
-    </form>
-  `;
+    <div id="predefinedMapContainer" style="display: none;">
+      <div id="predefinedMapInner" style="height: 400px;"></div>
+    </div>
 
-  const formContainer = document.getElementById('form-container');
-  formContainer.innerHTML = formHtml;
+    <input type="text" id="address" placeholder="Nhập địa chỉ của bạn">
+    <span id="showMapIcon" onclick="toggleMap()">🗺️</span>
+
+    <label for="role">Role:</label>
+    <input type="text" id="role" name="role" value="${role}" disabled>
+
+    <input type="submit" value="Submit">
+  </form>
+`;
+
+const formContainer = document.getElementById('form-container');
+formContainer.innerHTML = formHtml;
+
+var predefinedMapContainer = document.getElementById('predefinedMapContainer');
+var addressInput = document.getElementById('address');
+var predefinedMap = L.map('predefinedMap');
+navigator.geolocation.getCurrentPosition(function (position) {
+  var lat = position.coords.latitude;
+  var lng = position.coords.longitude;
+
+  predefinedMap.setView([lat, lng], 14);
+  reverseGeocode(predefinedMap.getCenter());
+  addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
+});
+
+function initializeMap() {
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(predefinedMap);
+  var geocoder = L.Control.Geocoder.nominatim();
+
+  
+
+  predefinedMap.on('click', function (e) {
+    if (predefinedMapContainer.style.display === 'block') {
+      reverseGeocode(e.latlng);
+      toggleMap();
+    }
+  });
+
+  predefinedMap.on('moveend', function () {
+    reverseGeocode(predefinedMap.getCenter());
+    addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
+  });
+
+  return predefinedMap;
+}
+
+
+function toggleMap() {
+  predefinedMap.invalidateSize();
+
+  if (predefinedMapContainer.style.display === 'none') {
+    predefinedMapContainer.style.display = 'block';
+    setTimeout(function () {
+      predefinedMap.invalidateSize();
+    }, 5);
+
+    if (!predefinedMapInner._leaflet_id) {
+      var innerMap = L.map('predefinedMapInner').setView([10.762835589385107, 106.67990747488228], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(innerMap);
+
+      innerMap.on('click', function (e) {
+        reverseGeocode(e.latlng);
+        toggleMap();
+      });
+    }
+  } else {
+    predefinedMapContainer.style.display = 'none';
+    onAddressInput();
+  }
+}
+
+function getAndSetUserLocation() {
+  navigator.geolocation.getCurrentPosition(function (position) {
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+
+    predefinedMap.setView([lat, lng], 14);
+    reverseGeocode(predefinedMap.getCenter());
+    addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
+  });
+}
+
+function onAddressInput() {
+  console.log('Address changed to:', addressInput.value);
+}
+
+function reverseGeocode(latlng) {
+  var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.display_name) {
+        addressInput.value = data.display_name;
+      } else {
+        addressInput.value = `(${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)})`;
+      }
+    })
+    .catch(error => {
+      console.error('Error during reverse geocoding:', error);
+    });
+}
+
+window.toggleMap = toggleMap;
+
+
 
   document.getElementById('createAccountForm').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -174,6 +279,7 @@ function handleCreateAccountSuccess(response) {
   if (response.success) {
     console.log('Account creation successful:', response);
     alert('Tạo thành công');
+    location.reload();
   } else {
     alert('Tạo thất bại')
     console.error('Error creating account:', response.error);
@@ -256,6 +362,7 @@ function renderWardOfficers(wardOfficers) {
     }
   });
   attachEditButtonListeners(wardOfficers)
+  attachDeleteButtonListeners(wardOfficers)
 }
 
 async function showDistrictOfficers() {
@@ -326,6 +433,7 @@ function renderDistrictOfficers(districtOfficers) {
     }
   });
   attachEditButtonListeners(districtOfficers)
+  attachDeleteButtonListeners(districtOfficers)
 }
 
 async function showGuests() {
@@ -396,6 +504,7 @@ function renderGuests(guests) {
     }
   });
   attachEditButtonListeners(guests)
+  attachDeleteButtonListeners(guests)
 }
 
 function attachEditButtonListeners(reports) {
@@ -404,6 +513,20 @@ function attachEditButtonListeners(reports) {
     editButton.addEventListener('click', () => {
       const reportIndex = parseInt(editButton.getAttribute('data-index'), 10);
       showEditForm(reports[reportIndex], reportIndex);
+    });
+  });
+}
+function attachDeleteButtonListeners(reports) {
+  const deleteButtons = document.querySelectorAll('.delete-button');
+  deleteButtons.forEach((deleteButton) => {
+    deleteButton.addEventListener('click', () => {
+      const reportIndex = parseInt(deleteButton.getAttribute('data-index'), 10);
+      const confirmation = confirm('Are you sure you want to delete this report?');
+      if (confirmation) {
+        console.log('có vô đây');
+        console.log('đây là ', reports[reportIndex].email);
+        deleteReport(reports[reportIndex].email, reportIndex);
+      }
     });
   });
 }
@@ -463,3 +586,29 @@ async function saveEditedReport(report, index) {
     handleError(error);
   }
 }
+
+async function deleteReport(email, index) {
+  try {
+    console.log(email);
+    const response = await fetch(`http://localhost:3030/api/user/${email}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': accessToken,
+      },
+    });
+
+    const data = await handleResponse(response);
+    if (data.success) {
+      console.log('User deleted successfully');
+      location.reload();
+    } else {
+      alert('Error deleting user: ' + data.message);
+    }
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+
+

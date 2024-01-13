@@ -202,6 +202,7 @@ router.put("/update_user", verifyToken, async (req, res) => {
   });
   
   router.delete("/:email", verifyToken, async (req, res) => {
+    console.log(req.params.email);
     try {
       const sys_ad = await User.findById(req.userId);
   
@@ -211,10 +212,11 @@ router.put("/update_user", verifyToken, async (req, res) => {
           message: "Access denied!",
         });
       }
-  
+      console.log(req.params.email)
       const deleteUser = await User.findOneAndDelete({
-        reportContent: req.params.email,
+        email: req.params.email,
       });
+      console.log(deleteUser)
   
       if (!deleteUser) {
         return res.status(200).json({

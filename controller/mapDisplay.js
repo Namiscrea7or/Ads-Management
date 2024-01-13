@@ -347,6 +347,7 @@ function submitForm() {
   .then(data => {
       console.log('Success:', data);
       alert('success')
+      location.reload();
   })
   .catch(error => {
       alert('Error')
