@@ -20,6 +20,7 @@ router.get('/info', verifyToken, async (req, res) => {
                 email: user.email,
                 full_name: user.full_name,
                 phone_number: user.phone_number,
+                address: user.address,
                 dob: user.dob,
                 role: user.role,
             }

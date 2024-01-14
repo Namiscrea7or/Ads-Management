@@ -31,6 +31,7 @@ Content-Type: application/json
     "email": "cbvhtt@gmail.com",
     "password": "cbvhtt",
     "full_name": "Phan Phước Hải Nam",
+    "address": "THPHCM",
     "dob": "2003-11-31",
     "phone_number": "113",
     "address": "Sài Gòn"

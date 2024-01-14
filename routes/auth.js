@@ -9,6 +9,7 @@ router.post("/register", async (req, res) => {
   const {
     email,
     password,
+    address,
     full_name,
     phone_number,
     dob,
@@ -32,6 +33,7 @@ router.post("/register", async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
+      address,
       role: "Người Dân",
 	    full_name,
 	    phone_number,
@@ -112,6 +114,7 @@ router.post("/register_CBVHTT", async (req, res) => {
   const {
     email,
     password,
+    address,
     full_name,
     phone_number,
     dob,
@@ -135,6 +138,7 @@ router.post("/register_CBVHTT", async (req, res) => {
       email,
       password: hashedPassword,
       role: "Cán bộ Sở",
+      address,
       full_name,
 	    phone_number,
       dob
@@ -164,6 +168,7 @@ router.post("/register_CB", async (req, res) => {
     email,
     password,
     full_name,
+    address,
     phone_number,
     role,
     dob,
@@ -186,6 +191,7 @@ router.post("/register_CB", async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
+      address,
       role,
       full_name,
 	    phone_number,

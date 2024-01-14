@@ -68,6 +68,7 @@ function renderUserInfo(user) {
     <p>Phone Number: ${user.phone_number}</p>
     <p>Date of Birth: ${user.dob} </p>
     <p>Role: ${user.role} </p>
+    <p>Address: ${user.address} <p>
   `;
   userDetailsElement.innerHTML = html;
 
@@ -139,6 +140,7 @@ function showCreateAccountForm(role) {
       <div id="predefinedMapInner" style="height: 400px;"></div>
     </div>
 
+    <label for="address">Address:</label>
     <input type="text" id="address" placeholder="Nhập địa chỉ của bạn">
     <span id="showMapIcon" onclick="toggleMap()">🗺️</span>
 
@@ -149,70 +151,12 @@ function showCreateAccountForm(role) {
   </form>
 `;
 
-const formContainer = document.getElementById('form-container');
-formContainer.innerHTML = formHtml;
+  const formContainer = document.getElementById('form-container');
+  formContainer.innerHTML = formHtml;
 
-var predefinedMapContainer = document.getElementById('predefinedMapContainer');
-var addressInput = document.getElementById('address');
-var predefinedMap = L.map('predefinedMap');
-navigator.geolocation.getCurrentPosition(function (position) {
-  var lat = position.coords.latitude;
-  var lng = position.coords.longitude;
-
-  predefinedMap.setView([lat, lng], 14);
-  reverseGeocode(predefinedMap.getCenter());
-  addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
-});
-
-function initializeMap() {
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(predefinedMap);
-  var geocoder = L.Control.Geocoder.nominatim();
-
-  
-
-  predefinedMap.on('click', function (e) {
-    if (predefinedMapContainer.style.display === 'block') {
-      reverseGeocode(e.latlng);
-      toggleMap();
-    }
-  });
-
-  predefinedMap.on('moveend', function () {
-    reverseGeocode(predefinedMap.getCenter());
-    addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
-  });
-
-  return predefinedMap;
-}
-
-
-function toggleMap() {
-  predefinedMap.invalidateSize();
-
-  if (predefinedMapContainer.style.display === 'none') {
-    predefinedMapContainer.style.display = 'block';
-    setTimeout(function () {
-      predefinedMap.invalidateSize();
-    }, 5);
-
-    if (!predefinedMapInner._leaflet_id) {
-      var innerMap = L.map('predefinedMapInner').setView([10.762835589385107, 106.67990747488228], 13);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(innerMap);
-
-      innerMap.on('click', function (e) {
-        reverseGeocode(e.latlng);
-        toggleMap();
-      });
-    }
-  } else {
-    predefinedMapContainer.style.display = 'none';
-    onAddressInput();
-  }
-}
-
-function getAndSetUserLocation() {
+  var predefinedMapContainer = document.getElementById('predefinedMapContainer');
+  var addressInput = document.getElementById('address');
+  var predefinedMap = L.map('predefinedMap');
   navigator.geolocation.getCurrentPosition(function (position) {
     var lat = position.coords.latitude;
     var lng = position.coords.longitude;
@@ -221,30 +165,88 @@ function getAndSetUserLocation() {
     reverseGeocode(predefinedMap.getCenter());
     addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
   });
-}
 
-function onAddressInput() {
-  console.log('Address changed to:', addressInput.value);
-}
+  function initializeMap() {
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(predefinedMap);
+    var geocoder = L.Control.Geocoder.nominatim();
 
-function reverseGeocode(latlng) {
-  var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`;
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (data.display_name) {
-        addressInput.value = data.display_name;
-      } else {
-        addressInput.value = `(${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)})`;
+
+    predefinedMap.on('click', function (e) {
+      if (predefinedMapContainer.style.display === 'block') {
+        reverseGeocode(e.latlng);
+        toggleMap();
       }
-    })
-    .catch(error => {
-      console.error('Error during reverse geocoding:', error);
     });
-}
 
-window.toggleMap = toggleMap;
+    predefinedMap.on('moveend', function () {
+      reverseGeocode(predefinedMap.getCenter());
+      addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
+    });
+
+    return predefinedMap;
+  }
+
+
+  function toggleMap() {
+    predefinedMap.invalidateSize();
+
+    if (predefinedMapContainer.style.display === 'none') {
+      predefinedMapContainer.style.display = 'block';
+      setTimeout(function () {
+        predefinedMap.invalidateSize();
+      }, 5);
+
+      if (!predefinedMapInner._leaflet_id) {
+        var innerMap = L.map('predefinedMapInner').setView([10.762835589385107, 106.67990747488228], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(innerMap);
+
+        innerMap.on('click', function (e) {
+          reverseGeocode(e.latlng);
+          toggleMap();
+        });
+      }
+    } else {
+      predefinedMapContainer.style.display = 'none';
+      onAddressInput();
+    }
+  }
+
+  function getAndSetUserLocation() {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+
+      predefinedMap.setView([lat, lng], 14);
+      reverseGeocode(predefinedMap.getCenter());
+      addressInput.value = `(${predefinedMap.getCenter().lat.toFixed(6)}, ${predefinedMap.getCenter().lng.toFixed(6)})`;
+    });
+  }
+
+  function onAddressInput() {
+    console.log('Address changed to:', addressInput.value);
+  }
+
+  function reverseGeocode(latlng) {
+    var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}&zoom=18&addressdetails=1`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.display_name) {
+          addressInput.value = data.display_name;
+        } else {
+          addressInput.value = `(${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)})`;
+        }
+      })
+      .catch(error => {
+        console.error('Error during reverse geocoding:', error);
+      });
+  }
+
+  window.toggleMap = toggleMap;
 
 
 
@@ -253,6 +255,8 @@ window.toggleMap = toggleMap;
     const formData = new FormData(event.target);
 
     formData.append('role', role);
+    formData.append('address', addressInput.value);
+    console.log('form data: ', formData.get('address'));
 
     fetch('http://localhost:3030/api/auth/register_CB', {
       method: 'POST',
@@ -264,6 +268,7 @@ window.toggleMap = toggleMap;
         email: formData.get('email'),
         password: formData.get('password'),
         full_name: formData.get('full_name'),
+        address: formData.get('address'),
         phone_number: formData.get('phone_number'),
         dob: formData.get('dob'),
         role: formData.get('role'),
