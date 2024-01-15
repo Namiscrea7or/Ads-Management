@@ -51,7 +51,7 @@ router.post('/marker', verifyToken, async (req, res) => {
     }
 });
 
-router.get('/info', verifyToken, async (req, res) => {
+router.get('/info', async (req, res) => {
   try {
     const markers = await Marker.find().populate('billboards');
     const markerList = markers.map((marker) => ({

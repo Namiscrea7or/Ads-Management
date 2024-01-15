@@ -143,9 +143,7 @@ function loadDataFromServer() {
   $.ajax({
     url: 'http://localhost:3030/api/marker/info',
     method: 'GET',
-    headers: {
-      'Authorization': localStorage.getItem('accessToken'),
-    },
+    
     success: function (data) {
       console.log('Data loaded successfully:', data);
       updateMapWithMarkers(data.markerList);
@@ -195,6 +193,9 @@ function updateMapWithMarkers(data) {
           if (!(location.billboards && location.billboards.length > 0)) {
             if (userRole === 'Cán bộ Sở') {
               BbButton.style.display = 'block';
+            }
+            else {
+              BbButton.style.display = 'none';
             }
             BbButton.addEventListener('click', function () {
               console.log('Button clicked for location:', location);

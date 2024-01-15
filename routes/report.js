@@ -5,77 +5,77 @@ const Report = require("../models/Report");
 const User = require("../models/user")
 
 router.post('/create', async (req, res) => {
-    const {
-        address,
-        reportType,
-        reporterName,
-        reporterEmail,
-        reporterPhone,
-        reportContent
-    } = req.body;
+  const {
+    address,
+    reportType,
+    reporterName,
+    reporterEmail,
+    reporterPhone,
+    reportContent
+  } = req.body;
 
-    try {
-        const newReport = new Report({
-            address,
-            reportType,
-            reporterName,
-            reporterEmail,
-            reporterPhone,
-            reportContent
-        });
+  try {
+    const newReport = new Report({
+      address,
+      reportType,
+      reporterName,
+      reporterEmail,
+      reporterPhone,
+      reportContent
+    });
 
 
-        await newReport.save();
+    await newReport.save();
 
-        return res.json({
-            success: true,
-            message: "Assign Successfully",
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
-    }
+    return res.json({
+      success: true,
+      message: "Assign Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 });
 
 router.get('/info', verifyToken, async (req, res) => {
-    try {
-        const sys_ad = await User.findOne({ _id: req.userId });
-        if (!sys_ad)
-          return res.status(200).json({
-            success: false,
-            message: "Cán bộ văn hoá thể thao không tìm thấy",
-          });
+  try {
+    const sys_ad = await User.findOne({ _id: req.userId });
+    if (!sys_ad)
+      return res.status(200).json({
+        success: false,
+        message: "Cán bộ văn hoá thể thao không tìm thấy",
+      });
 
-          if (sys_ad.role != "Cán bộ Sở")
-          return res.status(200).json({
-            success: false,
-            message: "Access denied!",
-          });
-    
-        const reports = await Report.find();
-        if (reports.length === 0) {
-          return res.json({ success: true, message: "There are no reports in report list" });
-        }
-        const allReports = reports.map(report => ({
-            address: report.address,
-            reportType: report.reportType,
-            reporterName: report.reporterName,
-            reporterEmail: report.reporterEmail,
-            reporterPhone: report.reporterPhone,
-            reportContent: report.reportContent
-        }));
-    
-        return res.json({ success: true, reports: allReports });
-      } catch (error) {
-        console.log(error);
-        return res.status(200).json({
-          success: false,
-          message: "Internal server error",
-        });
-      }
+    if (sys_ad.role != "Cán bộ Sở")
+      return res.status(200).json({
+        success: false,
+        message: "Access denied!",
+      });
+
+    const reports = await Report.find();
+    if (reports.length === 0) {
+      return res.json({ success: true, message: "There are no reports in report list" });
+    }
+    const allReports = reports.map(report => ({
+      address: report.address,
+      reportType: report.reportType,
+      reporterName: report.reporterName,
+      reporterEmail: report.reporterEmail,
+      reporterPhone: report.reporterPhone,
+      reportContent: report.reportContent
+    }));
+
+    return res.json({ success: true, reports: allReports });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 });
 
 router.put("/update_report", verifyToken, async (req, res) => {
@@ -166,4 +166,124 @@ router.delete("/:reportContent", verifyToken, async (req, res) => {
   }
 });
 
+function extractAddressInfo(address) {
+  var parts = address.split(',');
+  var ward = '';
+  var district = '';
+
+  for (var i = 0; i < parts.length; i++) {
+    var part = parts[i].trim();
+
+    if (part.includes('Ward') || part.includes('Phường')) {
+      ward = part.replace(/(Ward|Phường)/i, '').trim();
+    }
+
+    if (part.includes('District') || part.includes('Quận')) {
+      district = part.replace(/(District|Quận)/i, '').trim();
+    }
+  }
+
+  return { ward, district };
+}
+
+router.get('/info_cbp', verifyToken, async (req, res) => {
+  try {
+    const sys_ad = await User.findOne({ _id: req.userId });
+    if (!sys_ad)
+      return res.status(200).json({
+        success: false,
+        message: "Khong tim thay can bo",
+      });
+
+    if (sys_ad.role != "Cán bộ Phường")
+      return res.status(200).json({
+        success: false,
+        message: "Access denied!",
+      });
+
+    console.log('address: ', sys_ad.address)
+
+    var {ward: userWard} = extractAddressInfo(sys_ad.address);
+    console.log('user ward: ', userWard);
+    const reports = await Report.find();
+    if (reports.length === 0) {
+      return res.json({ success: true, message: "There are no reports in report list" });
+    }
+
+    
+
+    const matchingReports = reports
+      .filter(report => {
+        const { ward: reportWard } = extractAddressInfo(report.address);
+        return userWard === reportWard;
+      })
+      .map(report => ({
+        address: report.address,
+        reportType: report.reportType,
+        reporterName: report.reporterName,
+        reporterEmail: report.reporterEmail,
+        reporterPhone: report.reporterPhone,
+        reportContent: report.reportContent
+      }));
+
+    return res.json({ success: true, reports: matchingReports });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+router.get('/info_cbq', verifyToken, async (req, res) => {
+  try {
+    const sys_ad = await User.findOne({ _id: req.userId });
+    if (!sys_ad)
+      return res.status(200).json({
+        success: false,
+        message: "Khong tim thay can bo",
+      });
+
+    if (sys_ad.role != "Cán bộ Quận")
+      return res.status(200).json({
+        success: false,
+        message: "Access denied!",
+      });
+
+    console.log('address: ', sys_ad.address)
+
+    var {district: userDistrict} = extractAddressInfo(sys_ad.address);
+    const reports = await Report.find();
+    if (reports.length === 0) {
+      return res.json({ success: true, message: "There are no reports in report list" });
+    }
+
+    
+
+    const matchingReports = reports
+      .filter(report => {
+        const { district: reportDistrict } = extractAddressInfo(report.address);
+        return userDistrict === reportDistrict;
+      })
+      .map(report => ({
+        address: report.address,
+        reportType: report.reportType,
+        reporterName: report.reporterName,
+        reporterEmail: report.reporterEmail,
+        reporterPhone: report.reporterPhone,
+        reportContent: report.reportContent
+      }));
+
+    return res.json({ success: true, reports: matchingReports });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
 module.exports = router;
+

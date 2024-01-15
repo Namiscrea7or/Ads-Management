@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         navbarNav.appendChild(logoutLink);
         document.getElementById('logoutLink').addEventListener('click', function () {
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('userRole');
             window.location.href = '/login'
         });
     } else {

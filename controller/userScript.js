@@ -3,6 +3,7 @@ const itemsPerPage = 2;
 let currentPageCBP = 1;
 let currentPageCBQ = 1;
 let currentPageGuests = 1;
+let currentPageReports = 1;
 
 document.addEventListener('DOMContentLoaded', function () {
   console.log('Access Token:', accessToken);
@@ -61,7 +62,7 @@ function handleError(error) {
 function renderUserInfo(user) {
   const userDetailsElement = document.getElementById('user-details');
   const additionalActionsElement = document.getElementById('additional-actions');
-
+  var {ward, district} = extractAddressInfo(user.address);
   const html = `
     <h2>${user.full_name}</h2>
     <p>Email: ${user.email}</p>
@@ -69,6 +70,8 @@ function renderUserInfo(user) {
     <p>Date of Birth: ${user.dob} </p>
     <p>Role: ${user.role} </p>
     <p>Address: ${user.address} <p>
+    <p> Phường: ${ward} </p>
+    <p> Quận: ${district} </p>
   `;
   userDetailsElement.innerHTML = html;
 
@@ -99,7 +102,53 @@ function renderUserInfo(user) {
       showGuests();
     });
   }
+  else if (user.role === 'Cán bộ Phường') {
+    const additionalActionsHtml = `
+      <button id = "manageRp">Quản lí Báo cáo cùng phường</button>
+    `;
+    additionalActionsElement.innerHTML = additionalActionsHtml;
+    document.getElementById('manageRp').addEventListener('click', () => {
+      clearOtherLists();
+      showCBPrp();
+    });
+  }
+  else if (user.role === 'Cán bộ Quận') {
+    const additionalActionsHtml = `
+      <button id = "manageRp">Quản lí Báo cáo cùng Quận</button>
+    `;
+    additionalActionsElement.innerHTML = additionalActionsHtml;
+    document.getElementById('manageRp').addEventListener('click', () => {
+      clearOtherLists();
+      showCBQrp();
+    });
+  }
 }
+
+function extractAddressInfo(address) {
+  if (!address) {
+    console.error('Address is undefined or null.');
+    return { ward: '', district: '' };
+  }
+
+  var parts = address.split(',');
+  var ward = '';
+  var district = '';
+
+  for (var i = 0; i < parts.length; i++) {
+    var part = parts[i].trim();
+
+    if (part.includes('Ward') || part.includes('Phường')) {
+      ward = part.replace(/(Ward|Phường)/i, '').trim();
+    }
+
+    if (part.includes('District') || part.includes('Quận')) {
+      district = part.replace(/(District|Quận)/i, '').trim();
+    }
+  }
+
+  return { ward, district };
+}
+
 
 function clearOtherLists() {
   const cbqElement = document.getElementById('cbq');
@@ -615,5 +664,84 @@ async function deleteReport(email, index) {
   }
 }
 
+async function showCBPrp() {
+  try {
+    const response = await fetch('http://localhost:3030/api/report/info_cbp', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
 
+    const data = await handleResponse(response);
+    handleReportsSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
+}
 
+async function showCBQrp() {
+  try {
+    const response = await fetch('http://localhost:3030/api/report/info_cbq', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken
+      },
+    });
+
+    const data = await handleResponse(response);
+    handleReportsSuccess(data);
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+function handleReportsSuccess(response) {
+  if (response.success) {
+    console.log(response);
+    renderCBReports(response.reports);
+  } else {
+    console.log('error');
+    console.error('Error from server:', response.error);
+  }
+}
+
+function renderCBReports(reports) {
+  const reportsElement = document.getElementById('reports');
+  const paginationControlsReports = document.getElementById('pagination-controls-reports');
+
+  paginationControlsReports.innerHTML = `
+    <button id="prevPageReports">Previous</button>
+    <span>Page ${currentPageReports}</span>
+    <button id="nextPageReports">Next</button>
+  `;
+
+  const startIndex = (currentPageReports - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedReports = reports.slice(startIndex, endIndex);
+
+  const html = paginatedReports.map((report, index) => `
+    <h2>${report.address}</h2>
+    <p>Sender Name: ${report.reporterName}</p>
+    <p>Email: ${report.reporterEmail}</p>
+    <p>Phone Number: ${report.reporterPhone}</p>
+    <p>Content: ${report.reportContent}</p>
+  `).join('');
+
+  reportsElement.innerHTML = html;
+
+  document.getElementById('prevPageReports').addEventListener('click', () => {
+    if (currentPageReports > 1) {
+      currentPageReports--;
+      renderCBReports(reports);
+    }
+  });
+
+  document.getElementById('nextPageReports').addEventListener('click', () => {
+    const totalPages = Math.ceil(reports.length / itemsPerPage);
+    if (currentPageReports < totalPages) {
+      currentPageReports++;
+      renderCBReports(reports);
+    }
+  });
+}
