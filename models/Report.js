@@ -27,6 +27,11 @@ const ReportSchema = new Schema({
     type: String,
     required: true,
   },
+  reportProccessed: {
+    type: String,
+    enum: ['Chưa xử lý', 'Đang xử lý', 'Đã xử lý'],
+    required: true
+  },
 });
 
 module.exports = mongoose.model("report", ReportSchema);

@@ -11,7 +11,8 @@ router.post('/create', async (req, res) => {
     reporterName,
     reporterEmail,
     reporterPhone,
-    reportContent
+    reportContent,
+    reportProccessed
   } = req.body;
 
   try {
@@ -21,7 +22,8 @@ router.post('/create', async (req, res) => {
       reporterName,
       reporterEmail,
       reporterPhone,
-      reportContent
+      reportContent,
+      reportProccessed
     });
 
 
@@ -65,7 +67,8 @@ router.get('/info', verifyToken, async (req, res) => {
       reporterName: report.reporterName,
       reporterEmail: report.reporterEmail,
       reporterPhone: report.reporterPhone,
-      reportContent: report.reportContent
+      reportContent: report.reportContent,
+      reportProccessed: report.reportProccessed,
     }));
 
     return res.json({ success: true, reports: allReports });
@@ -79,19 +82,19 @@ router.get('/info', verifyToken, async (req, res) => {
 });
 
 router.put("/update_report", verifyToken, async (req, res) => {
-  console.log('gọi api thành công')
   try {
     const sys_ad = await User.findById(req.userId);
 
-    if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+    if (!sys_ad) {
       return res.status(403).json({
         success: false,
         message: "Access denied!",
       });
     }
 
-    const { address, reportType, reporterName, reporterEmail, reporterPhone, reportContent } = req.body;
-    if (!address || !reportType || !reporterName || !reporterEmail || !reporterPhone || !reportContent) {
+    const { address, reportType, reporterName, reporterEmail, reporterPhone, reportContent, reportProccessed } = req.body;
+    console.log('Thông tin: ', reporterName, reporterEmail, reportProccessed)
+    if (!address || !reportType || !reporterName || !reporterEmail || !reporterPhone || !reportContent || !reportProccessed) {
       return res.status(200).json({
         success: false,
         message: "Invalid or missing information!",
@@ -99,7 +102,7 @@ router.put("/update_report", verifyToken, async (req, res) => {
     }
 
     const updatedReport = {
-      address, reportType, reporterName, reporterEmail, reporterPhone, reportContent
+      address, reportType, reporterName, reporterEmail, reporterPhone, reportContent, reportProccessed
     };
 
     const reportUpdatePrice = { address };
@@ -134,7 +137,7 @@ router.delete("/:reportContent", verifyToken, async (req, res) => {
   try {
     const sys_ad = await User.findById(req.userId);
 
-    if (!sys_ad || sys_ad.role !== "Cán bộ Sở") {
+    if (!sys_ad) {
       return res.status(403).json({
         success: false,
         message: "Access denied!",
@@ -201,10 +204,8 @@ router.get('/info_cbp', verifyToken, async (req, res) => {
         message: "Access denied!",
       });
 
-    console.log('address: ', sys_ad.address)
 
     var {ward: userWard} = extractAddressInfo(sys_ad.address);
-    console.log('user ward: ', userWard);
     const reports = await Report.find();
     if (reports.length === 0) {
       return res.json({ success: true, message: "There are no reports in report list" });
@@ -223,7 +224,8 @@ router.get('/info_cbp', verifyToken, async (req, res) => {
         reporterName: report.reporterName,
         reporterEmail: report.reporterEmail,
         reporterPhone: report.reporterPhone,
-        reportContent: report.reportContent
+        reportContent: report.reportContent,
+        reportProccessed: report.reportProccessed
       }));
 
     return res.json({ success: true, reports: matchingReports });
@@ -251,7 +253,6 @@ router.get('/info_cbq', verifyToken, async (req, res) => {
         message: "Access denied!",
       });
 
-    console.log('address: ', sys_ad.address)
 
     var {district: userDistrict} = extractAddressInfo(sys_ad.address);
     const reports = await Report.find();
@@ -272,7 +273,8 @@ router.get('/info_cbq', verifyToken, async (req, res) => {
         reporterName: report.reporterName,
         reporterEmail: report.reporterEmail,
         reporterPhone: report.reporterPhone,
-        reportContent: report.reportContent
+        reportContent: report.reportContent,
+        reportProccessed: report.reportProccessed,
       }));
 
     return res.json({ success: true, reports: matchingReports });

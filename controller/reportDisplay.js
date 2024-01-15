@@ -29,12 +29,42 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (role === 'Cán bộ Sở') {
-        fetchUserInfo(accessToken);
+        showCBSrp(accessToken);
+    }
+    else if (role === 'Cán bộ Phường') {
+        showCBPrp(accessToken);
+    }
+    else if(role === 'Cán bộ Quận') {
+        showCBQrp(accessToken);
     }
 });
 
-function fetchUserInfo(accessToken) {
+function showCBSrp(accessToken) {
     fetch('http://localhost:3030/api/report/info', {
+        method: 'GET',
+        headers: {
+            'Authorization': accessToken
+        },
+    })
+    .then(handleResponse)
+    .then(handleSuccess)
+    .catch(handleError);
+}
+
+function showCBPrp(accessToken) {
+    fetch('http://localhost:3030/api/report/info_cbp', {
+        method: 'GET',
+        headers: {
+            'Authorization': accessToken
+        },
+    })
+    .then(handleResponse)
+    .then(handleSuccess)
+    .catch(handleError);
+}
+
+function showCBQrp(accessToken) {
+    fetch('http://localhost:3030/api/report/info_cbq', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -90,6 +120,7 @@ function renderReportInfo(reports) {
                 <p><strong>Reporter Email:</strong> ${report.reporterEmail}</p>
                 <p><strong>Reporter Phone:</strong> ${report.reporterPhone}</p>
                 <p><strong>Report Content:</strong> ${report.reportContent}</p>
+                <p><strong>Status: </strong> ${report.reportProccessed}</p>
             </div>
             <div class="button">
                 <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
@@ -170,6 +201,7 @@ function saveEditedReport(report, index) {
         reporterEmail: report.reporterEmail,
         reporterPhone: report.reporterPhone,
         reportContent: editForm.querySelector('#edit-report-content').value,
+        reportProccessed: editForm.querySelector('#reportProccessed').value
     };
 
     console.log(updatedReport);
@@ -183,9 +215,13 @@ function saveEditedReport(report, index) {
         body: JSON.stringify(updatedReport),
     })
     .then(handleResponse)
-    .then(() => {
-        editForm.style.display = 'none';
-        fetchUserInfo(accessToken);
+    .then((response) => {
+        if (response.success) {
+            reports.splice(index, 1);
+            location.reload();
+        } else {
+            console.error('Error deleting report:', response.message);
+        }
     })
     .catch(handleError);
 }
@@ -196,8 +232,6 @@ function deleteReport(reportContent, index) {
         console.error('Error: Reports array is not properly initialized.');
         return;
     }
-
-
     fetch(`http://localhost:3030/api/report/${reportContent}`, {
         method: 'DELETE',
         headers: {

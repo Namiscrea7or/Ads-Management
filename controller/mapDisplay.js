@@ -330,6 +330,7 @@ function submitForm() {
   const reporterEmail = document.getElementById('reporterEmail').value;
   const reporterPhone = document.getElementById('reporterPhone').value;
   const reportContent = document.getElementById('reportContent').value;
+  const reportProccessed = 'Chưa xử lý';
   fetch('http://localhost:3030/api/report/create', {
     method: 'POST',
     headers: {
@@ -341,7 +342,8 @@ function submitForm() {
       reporterName: reporterName,
       reporterEmail: reporterEmail,
       reporterPhone: reporterPhone,
-      reportContent: reportContent
+      reportContent: reportContent,
+      reportProccessed: reportProccessed
     }),
   })
   .then(response => response.json()) 
