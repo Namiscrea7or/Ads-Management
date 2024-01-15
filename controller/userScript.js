@@ -65,13 +65,11 @@ function renderUserInfo(user) {
   var {ward, district} = extractAddressInfo(user.address);
   const html = `
     <h2>${user.full_name}</h2>
-    <p>Email: ${user.email}</p>
-    <p>Phone Number: ${user.phone_number}</p>
-    <p>Date of Birth: ${user.dob} </p>
-    <p>Role: ${user.role} </p>
-    <p>Address: ${user.address} <p>
-    <p> Phường: ${ward} </p>
-    <p> Quận: ${district} </p>
+    <p><strong>Email:</strong> ${user.email}</p>
+    <p><strong>Phone Number:</strong> ${user.phone_number}</p>
+    <p><strong>Date of Birth:</strong> ${user.dob} </p>
+    <p><strong>Role:</strong> ${user.role} </p>
+    <p><strong>Address:</strong> ${user.address} <p>
   `;
   userDetailsElement.innerHTML = html;
 
@@ -85,8 +83,8 @@ function renderUserInfo(user) {
     `;
     additionalActionsElement.innerHTML = additionalActionsHtml;
 
-    document.getElementById('createDistrictOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Phường'));
-    document.getElementById('createWardOfficerBtn').addEventListener('click', () => showCreateAccountForm('Cán bộ Quận'));
+    document.getElementById('createDistrictOfficerBtn').addEventListener('click', () => {clearOtherLists(); showCreateAccountForm('Cán bộ Phường');});
+    document.getElementById('createWardOfficerBtn').addEventListener('click', () => {clearOtherLists(); showCreateAccountForm('Cán bộ Quận');});
     document.getElementById('manageCBP').addEventListener('click', () => {
       clearOtherLists();
       showWardOfficers();
@@ -102,26 +100,26 @@ function renderUserInfo(user) {
       showGuests();
     });
   }
-  else if (user.role === 'Cán bộ Phường') {
-    const additionalActionsHtml = `
-      <button id = "manageRp">Quản lí Báo cáo cùng phường</button>
-    `;
-    additionalActionsElement.innerHTML = additionalActionsHtml;
-    document.getElementById('manageRp').addEventListener('click', () => {
-      clearOtherLists();
-      showCBPrp();
-    });
-  }
-  else if (user.role === 'Cán bộ Quận') {
-    const additionalActionsHtml = `
-      <button id = "manageRp">Quản lí Báo cáo cùng Quận</button>
-    `;
-    additionalActionsElement.innerHTML = additionalActionsHtml;
-    document.getElementById('manageRp').addEventListener('click', () => {
-      clearOtherLists();
-      showCBQrp();
-    });
-  }
+  // else if (user.role === 'Cán bộ Phường') {
+  //   const additionalActionsHtml = `
+  //     <button id = "manageRp">Quản lí Báo cáo cùng phường</button>
+  //   `;
+  //   additionalActionsElement.innerHTML = additionalActionsHtml;
+  //   document.getElementById('manageRp').addEventListener('click', () => {
+  //     clearOtherLists();
+  //     showCBPrp();
+  //   });
+  // }
+  // else if (user.role === 'Cán bộ Quận') {
+  //   const additionalActionsHtml = `
+  //     <button id = "manageRp">Quản lí Báo cáo cùng Quận</button>
+  //   `;
+  //   additionalActionsElement.innerHTML = additionalActionsHtml;
+  //   document.getElementById('manageRp').addEventListener('click', () => {
+  //     clearOtherLists();
+  //     showCBQrp();
+  //   });
+  // }
 }
 
 function extractAddressInfo(address) {
@@ -150,20 +148,7 @@ function extractAddressInfo(address) {
 }
 
 
-function clearOtherLists() {
-  const cbqElement = document.getElementById('cbq');
-  const cbpElement = document.getElementById('cbp');
-  const guestsElement = document.getElementById('guests');
-  const paginationCbp = document.getElementById('pagination-controls-cbp')
-  const paginationCbq = document.getElementById('pagination-controls-cbq')
-  const paginationGuest = document.getElementById('pagination-controls-guests')
-  paginationGuest.innerHTML = '';
-  paginationCbp.innerHTML = '';
-  paginationCbq.innerHTML = '';
-  cbqElement.innerHTML = '';
-  cbpElement.innerHTML = '';
-  guestsElement.innerHTML = '';
-}
+
 
 function showCreateAccountForm(role) {
   const formHtml = `
@@ -199,6 +184,8 @@ function showCreateAccountForm(role) {
     <input type="submit" value="Submit">
   </form>
 `;
+
+
 
   const formContainer = document.getElementById('form-container');
   formContainer.innerHTML = formHtml;
@@ -237,6 +224,7 @@ function showCreateAccountForm(role) {
 
     return predefinedMap;
   }
+
 
 
   function toggleMap() {
@@ -329,6 +317,24 @@ function showCreateAccountForm(role) {
   });
 }
 
+function clearOtherLists() {
+  const createAcc = document.getElementById('createAccountForm');
+  const cbqElement = document.getElementById('cbq');
+  const cbpElement = document.getElementById('cbp');
+  const guestsElement = document.getElementById('guests');
+  const paginationCbp = document.getElementById('pagination-controls-cbp')
+  const paginationCbq = document.getElementById('pagination-controls-cbq')
+  const paginationGuest = document.getElementById('pagination-controls-guests')
+  if(createAcc)
+    createAcc.innerHTML = '';
+  paginationGuest.innerHTML = '';
+  paginationCbp.innerHTML = '';
+  paginationCbq.innerHTML = '';
+  cbqElement.innerHTML = '';
+  cbpElement.innerHTML = '';
+  guestsElement.innerHTML = '';
+}
+
 function handleCreateAccountSuccess(response) {
   if (response.success) {
     console.log('Account creation successful:', response);
@@ -388,18 +394,37 @@ function renderWardOfficers(wardOfficers) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedWardOfficers = wardOfficers.slice(startIndex, endIndex);
 
-  const html = paginatedWardOfficers.map((officer, index) => `
-      <h2>${officer.full_name}</h2>
-      <p>Email: ${officer.email}</p>
-      <p>Phone Number: ${officer.phone_number}</p>
-      <p>Date of Birth: ${officer.dob} </p>
-      <div class="button">
-        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
-        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
-      </div>
-  `).join('');
+  const html = `
+  <table class="officer-table">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${paginatedWardOfficers.map((officer, index) => `
+        <tr>
+          <td>${officer.full_name}</td>
+          <td>${officer.email}</td>
+          <td>${officer.phone_number}</td>
+          <td>${officer.dob}</td>
+          <td class="button">
+            <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+            <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
 
-  wardOfficersElement.innerHTML = html;
+// Assuming wardOfficersElement is a container where you want to display the table
+wardOfficersElement.innerHTML = html;
+
 
   document.getElementById('prevPageCBP').addEventListener('click', () => {
     if (currentPageCBP > 1) {
@@ -459,16 +484,33 @@ function renderDistrictOfficers(districtOfficers) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedDistrictOfficers = districtOfficers.slice(startIndex, endIndex);
 
-  const html = paginatedDistrictOfficers.map((officer, index) => `
-      <h2>${officer.full_name}</h2>
-      <p>Email: ${officer.email}</p>
-      <p>Phone Number: ${officer.phone_number}</p>
-      <p>Date of Birth: ${officer.dob} </p>
-      <div class="button">
-        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
-        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
-      </div>
-  `).join('');
+  const html = `
+  <table class="officer-table">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${paginatedDistrictOfficers.map((officer, index) => `
+        <tr>
+          <td>${officer.full_name}</td>
+          <td>${officer.email}</td>
+          <td>${officer.phone_number}</td>
+          <td>${officer.dob}</td>
+          <td class="button">
+            <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+            <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
 
   districtOfficersElement.innerHTML = html;
 
@@ -530,16 +572,33 @@ function renderGuests(guests) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedGuests = guests.slice(startIndex, endIndex);
 
-  const html = paginatedGuests.map((guest, index) => `
-      <h2>${guest.full_name}</h2>
-      <p>Email: ${guest.email}</p>
-      <p>Phone Number: ${guest.phone_number}</p>
-      <p>Date of Birth: ${guest.dob} </p>
-      <div class="button">
-        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
-        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
-      </div>
-  `).join('');
+  const html = `
+  <table class="officer-table">
+    <thead>
+      <tr>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Date of Birth</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${paginatedGuests.map((officer, index) => `
+        <tr>
+          <td>${officer.full_name}</td>
+          <td>${officer.email}</td>
+          <td>${officer.phone_number}</td>
+          <td>${officer.dob}</td>
+          <td class="button">
+            <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+            <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>
+`;
 
   guestsElement.innerHTML = html;
 

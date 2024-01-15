@@ -8,14 +8,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const geocoder = L.Control.Geocoder.nominatim();
 
-var BbButton = document.createElement('button');
-document.body.appendChild(BbButton);
-BbButton.innerHTML = 'Tạo bảng quảng cáo';
+var BbButton = document.getElementById('createBBButton')
 BbButton.style.display = 'none';
 
-var adsCheckButton = document.createElement('button');
-adsCheckButton.style.display = 'none';
-document.body.appendChild(adsCheckButton);
+var adsCheckButton = document.getElementById('adsCheckButton');
+
 let checkBtn = false;
 var adsCheckForm = null;
 var currentLocation = null;
@@ -60,9 +57,9 @@ map.on('click', function (e) {
         $('#reportButton').hide();
         BbButton.style.display = 'none';
         detailWhenClick(locationData);
+        $('#reportForm').hide();
         if (userRole === 'Cán bộ Sở') {
           adsCheckButton.style.display = 'block';
-          adsCheckButton.innerHTML = 'Tạo điểm quảng cáo';
           if (checkBtn === false) {
             adsCheckButton.style.display = 'block';
             checkBtn = true;

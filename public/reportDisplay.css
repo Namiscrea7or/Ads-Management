@@ -6,8 +6,13 @@
     border: 1px solid #ccc;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: left; 
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+
 
 .report-item {
     border-bottom: 1px solid #eee;
@@ -65,14 +70,18 @@
 .horizontal-pagination {
     display: flex;
     align-items: center;
+    margin-top: 10px; 
+    justify-content: center;
 }
+
+
 
 #prev-page, #next-page {
     padding: 10px;
     margin: 5px;
     cursor: pointer;
     background-color: #ddd;
-    color: white;
+    color: black;
     border: none;
     border-radius: 5px;
 }
@@ -121,3 +130,70 @@
     background-color: #007bff;
     color: #fff;
 }
+
+.report-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    width: 150px;
+}
+
+.report-table th {
+    background-color: #f2f2f2;
+}
+
+
+.button button {
+    padding: 5px 10px;
+}
+
+.edit-form {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px; 
+    margin: 20px 0;
+    text-align: center;
+}
+
+.edit-form h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.edit-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.edit-form select,
+.edit-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.edit-form button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-form button:hover {
+    background-color: #0056b3;
+}
+

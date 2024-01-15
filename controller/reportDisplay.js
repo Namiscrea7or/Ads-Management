@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     else if (role === 'Cán bộ Phường') {
         showCBPrp(accessToken);
     }
-    else if(role === 'Cán bộ Quận') {
+    else if (role === 'Cán bộ Quận') {
         showCBQrp(accessToken);
     }
 });
@@ -46,9 +46,9 @@ function showCBSrp(accessToken) {
             'Authorization': accessToken
         },
     })
-    .then(handleResponse)
-    .then(handleSuccess)
-    .catch(handleError);
+        .then(handleResponse)
+        .then(handleSuccess)
+        .catch(handleError);
 }
 
 function showCBPrp(accessToken) {
@@ -58,9 +58,9 @@ function showCBPrp(accessToken) {
             'Authorization': accessToken
         },
     })
-    .then(handleResponse)
-    .then(handleSuccess)
-    .catch(handleError);
+        .then(handleResponse)
+        .then(handleSuccess)
+        .catch(handleError);
 }
 
 function showCBQrp(accessToken) {
@@ -70,9 +70,9 @@ function showCBQrp(accessToken) {
             'Authorization': accessToken
         },
     })
-    .then(handleResponse)
-    .then(handleSuccess)
-    .catch(handleError);
+        .then(handleResponse)
+        .then(handleSuccess)
+        .catch(handleError);
 }
 
 function handleResponse(response) {
@@ -110,26 +110,43 @@ function renderReportInfo(reports) {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const reportsToDisplay = reports.slice(startIndex, endIndex);
+    console.log(reportsToDisplay)
 
-    const html = reportsToDisplay.map((report, index) => `
-        <div class="report-item">
-            <div>
-                <p><strong>Address:</strong> ${report.address}</p>
-                <p><strong>Report Type:</strong> ${report.reportType}</p>
-                <p><strong>Reporter Name:</strong> ${report.reporterName}</p>
-                <p><strong>Reporter Email:</strong> ${report.reporterEmail}</p>
-                <p><strong>Reporter Phone:</strong> ${report.reporterPhone}</p>
-                <p><strong>Report Content:</strong> ${report.reportContent}</p>
-                <p><strong>Status: </strong> ${report.reportProccessed}</p>
-            </div>
-            <div class="button">
-                <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
-                <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
-            </div>
-        </div>
-    `).join('');
+    const html = `
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Address</th>
+                <th>Report Type</th>
+                <th>Reporter Name</th>
+                <th>Reporter Email</th>
+                <th>Reporter Phone</th>
+                <th>Report Content</th>
+                <th>Report Processed</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${reportsToDisplay.map((report, index) => `
+                <tr>
+                    <td>${report.address}</td>
+                    <td>${report.reportType}</td>
+                    <td>${report.reporterName}</td>
+                    <td>${report.reporterEmail}</td>
+                    <td>${report.reporterPhone}</td>
+                    <td>${report.reportContent}</td>
+                    <td>${report.reportProccessed}</td>
+                    <td class="button">
+                        <button class="edit-button" data-index="${startIndex + index}">Sửa</button>
+                        <button class="delete-button" data-index="${startIndex + index}">Xoá</button>
+                    </td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+`;
 
-    userDetailsElement.innerHTML = html;
+userDetailsElement.innerHTML = html;
 
     const prevPageButton = paginationElement.querySelector('#prev-page');
     const nextPageButton = paginationElement.querySelector('#next-page');
@@ -193,7 +210,7 @@ function showEditForm(report, index) {
 
 function saveEditedReport(report, index) {
     const editForm = document.querySelector('.edit-form');
-    
+
     const updatedReport = {
         address: report.address,
         reportType: editForm.querySelector('#edit-report-type').value,
@@ -214,16 +231,16 @@ function saveEditedReport(report, index) {
         },
         body: JSON.stringify(updatedReport),
     })
-    .then(handleResponse)
-    .then((response) => {
-        if (response.success) {
-            reports.splice(index, 1);
-            location.reload();
-        } else {
-            console.error('Error deleting report:', response.message);
-        }
-    })
-    .catch(handleError);
+        .then(handleResponse)
+        .then((response) => {
+            if (response.success) {
+                reports.splice(index, 1);
+                location.reload();
+            } else {
+                console.error('Error deleting report:', response.message);
+            }
+        })
+        .catch(handleError);
 }
 
 function deleteReport(reportContent, index) {
@@ -238,15 +255,15 @@ function deleteReport(reportContent, index) {
             'Authorization': accessToken,
         },
     })
-    .then(handleResponse)
-    .then((response) => {
-        if (response.success) {
-            reports.splice(index, 1);
-            location.reload();
-        } else {
-            console.error('Error deleting report:', response.message);
-        }
-    })
-    .catch(handleError);
+        .then(handleResponse)
+        .then((response) => {
+            if (response.success) {
+                reports.splice(index, 1);
+                location.reload();
+            } else {
+                console.error('Error deleting report:', response.message);
+            }
+        })
+        .catch(handleError);
 }
 
