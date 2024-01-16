@@ -58,7 +58,7 @@ map.on('click', function (e) {
         BbButton.style.display = 'none';
         detailWhenClick(locationData);
         $('#reportForm').hide();
-        if (userRole === 'Cán bộ Sở') {
+        if (userRole === 'Cán bộ Sở' || userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Quận') {
           adsCheckButton.style.display = 'block';
           if (checkBtn === false) {
             adsCheckButton.style.display = 'block';
@@ -135,20 +135,55 @@ function showReportForm(locationData) {
   return $('#details').find('form');
 }
 
+var accessToken = localStorage.getItem('accessToken')
 function loadDataFromServer() {
   console.log('Loading data from server');
-  $.ajax({
-    url: 'http://localhost:3030/api/marker/info',
-    method: 'GET',
-
-    success: function (data) {
-      console.log('Data loaded successfully:', data);
-      updateMapWithMarkers(data.markerList);
-    },
-    error: function (error) {
-      console.error('Error loading data:', error);
-    }
-  });
+  if(userRole === 'Cán bộ Phường') {
+    $.ajax({
+      url: 'http://localhost:3030/api/marker/info_cbp',
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken,
+      },
+      success: function (data) {
+        console.log('Data loaded successfully:', data);
+        updateMapWithMarkers(data.markerList);
+      },
+      error: function (error) {
+        console.error('Error loading data:', error);
+      }
+    });
+  }
+  else if(userRole === 'Cán bộ Quận') {
+    $.ajax({
+      url: 'http://localhost:3030/api/marker/info_cbq',
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken,
+      },
+      success: function (data) {
+        console.log('Data loaded successfully:', data);
+        updateMapWithMarkers(data.markerList);
+      },
+      error: function (error) {
+        console.error('Error loading data:', error);
+      }
+    });
+  }
+  else {
+    $.ajax({
+      url: 'http://localhost:3030/api/marker/info',
+      method: 'GET',
+  
+      success: function (data) {
+        console.log('Data loaded successfully:', data);
+        updateMapWithMarkers(data.markerList);
+      },
+      error: function (error) {
+        console.error('Error loading data:', error);
+      }
+    });
+  }
 }
 
 var detailsVisible = false;
@@ -168,8 +203,8 @@ function updateMapWithMarkers(data) {
 
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
-
-    var markerColor = location.planningStatus ? 'green' : 'red';
+    if(location.isActivated) {
+      var markerColor = location.planningStatus ? 'green' : 'red';
     var marker = L.marker([location.latitude, location.longitude], {
       icon: L.divIcon({
         className: 'custom-marker',
@@ -198,7 +233,7 @@ function updateMapWithMarkers(data) {
         showDetails(location);
         if (location.planningStatus === true) {
           if (!(location.billboards && location.billboards.length > 0)) {
-            if (userRole === 'Cán bộ Sở') {
+            if (userRole === 'Cán bộ Sở' || userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Quận') {
               BbButton.style.display = 'block';
             }
             else {
@@ -221,6 +256,7 @@ function updateMapWithMarkers(data) {
         }
       }
     });
+    }
   });
 }
 
@@ -274,7 +310,7 @@ if (location.image) {
 }
 
 // Kiểm tra xem có bảng quảng cáo hay không
-if (location.billboards) {
+if (location.billboards && location.billboards.isActivated) {
   detailsHTML += `<div class="billboard-container">
                     <h3>Thông tin Bảng Quảng Cáo</h3>
                     <ul>
@@ -297,7 +333,7 @@ detailsVisible = true;
 }
 
 function detailWhenClick(location) {
-  var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
+  var detailsHTML = `<h3>Thông tin Địa Điểm</h3>
                      <p><strong>Địa chỉ:</strong> ${location.address}</p>`;
   $('#details').html(detailsHTML);
 }
@@ -307,7 +343,61 @@ function hideDetails() {
   detailsVisible = false;
 }
 
+function drawWardOutline(district) {
+  var geocodeUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(district + ' Ho Chi Minh City');
+  $.ajax({
+    url: geocodeUrl,
+    dataType: 'json',
+    success: function (data) {
+      console.log('Geocoding data:', data);
+
+      if (data.length > 0) {
+        // Assuming the first result is the correct one; adjust as needed
+        var wardGeoJSON = {
+          type: 'FeatureCollection',
+          features: [{
+            type: 'Feature',
+            geometry: data[0].geojson,
+          }],
+        };
+        var wardLayer = L.geoJSON(wardGeoJSON, {
+          style: function (feature) {
+            console.log('Feature style data:', feature);
+            return {
+              color: 'red',
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.5,
+              fillColor: 'red'
+            };
+          }
+        }).addTo(map);
+
+      } else {
+        console.error("Không tìm thấy dữ liệu địa lý cho ward: " + ward);
+      }
+    },
+    error: function (error) {
+      console.error("Lỗi khi tìm kiếm dữ liệu địa lý: " + error);
+    }
+  });
+}
+
+var address = localStorage.getItem('address')
+var uward, udistrict;
+if(address) {
+  var {ward: uward, district: udistrict} = extractAddressInfo(address)
+}
+
+console.log('tên ward', uward, 'tên district', udistrict)
+
 function initializeMap() {
+  if(userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Sở') {
+    drawWardOutline('District ' + udistrict);
+  }
+  else if(userRole === 'Cán bộ Quận') {
+    drawWardOutline('Ward ' + uward, 'District ' + udistrict);
+  }
   loadDataFromServer();
   var control = L.Control.geocoder({
     position: 'topright',
@@ -317,9 +407,6 @@ function initializeMap() {
   map.on('click', function (e) {
     var latlng = e.latlng;
     console.log(latlng);
-    geocoder.reverse(latlng, map.options.crs.scale(map.getZoom()), function (results) {
-      console.log(results);
-    });
   });
 }
 

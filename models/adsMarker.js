@@ -46,6 +46,10 @@ const adsMarkerSchema = new Schema({
     ref: 'Billboard',
     required: false,
   },
+  isActivated: {
+    type: Boolean,
+    required: true,
+  }
 });
 
 module.exports = mongoose.model("adsMarker", adsMarkerSchema);

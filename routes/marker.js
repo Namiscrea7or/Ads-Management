@@ -14,7 +14,8 @@ router.post('/marker', verifyToken, async (req, res) => {
         // image,
         planningStatus,
         latitude,
-        longitude
+        longitude,
+        isActivated
     } = req.body;
   
     try {
@@ -34,6 +35,7 @@ router.post('/marker', verifyToken, async (req, res) => {
             planningStatus,
             latitude,
             longitude,
+            isActivated
         });
         
        
@@ -63,6 +65,7 @@ router.get('/info', async (req, res) => {
       adType: marker.adType,
       planningStatus: marker.planningStatus,
       latitude: marker.latitude,
+      isActivated: marker.isActivated,
       longitude: marker.longitude,
       billboards: marker.billboards,
     }));
@@ -128,6 +131,7 @@ router.get('/info_cbp', verifyToken, async (req, res) => {
       locationType: marker.locationType,
       adType: marker.adType,
       planningStatus: marker.planningStatus,
+      isActivated: marker.isActivated,
       latitude: marker.latitude,
       longitude: marker.longitude,
       billboards: marker.billboards,
@@ -174,6 +178,7 @@ router.get('/info_cbq', verifyToken, async (req, res) => {
       locationType: marker.locationType,
       adType: marker.adType,
       planningStatus: marker.planningStatus,
+      isActivated: marker.isActivated,
       latitude: marker.latitude,
       longitude: marker.longitude,
       billboards: marker.billboards,

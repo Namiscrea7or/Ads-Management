@@ -17,6 +17,9 @@ const BillboardSchema = new Schema({
     },
     date: {
       type: Date
+    },
+    isActivated: {
+      type: Boolean
     }
   
   });

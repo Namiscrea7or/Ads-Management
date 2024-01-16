@@ -49,6 +49,7 @@ function handleSuccess(response) {
     console.log(response);
     renderUserInfo(response.user);
     localStorage.setItem('userRole', response.user.role);
+    localStorage.setItem('address', response.user.address)
   } else {
     console.log('error');
     console.error('Error from server:', response.error);

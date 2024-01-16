@@ -10,7 +10,8 @@ router.post('/billboard', verifyToken, async (req, res) => {
         address,
         type,
         size,
-        date
+        date,
+        isActivated
     } = req.body;
 
     try {
@@ -18,7 +19,8 @@ router.post('/billboard', verifyToken, async (req, res) => {
             address,
             type,
             size,
-            date
+            date,
+            isActivated
         });
         await newBillboard.save();
         const markerToUpdate = await Marker.findOne({ address:address });
@@ -83,6 +85,7 @@ function extractAddressInfo(address) {
         type: marker.type,
         size: marker.size,
         date: marker.date,
+        isActivated: marker.isActivated
       }));
   
       res.json({
@@ -124,6 +127,7 @@ function extractAddressInfo(address) {
         type: marker.type,
         size: marker.size,
         date: marker.date,
+        isActivated: marker.isActivated
       }));
   
       res.json({
