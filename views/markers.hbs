@@ -1,0 +1,39 @@
+<div id="content-container">
+    <div id="user-details"></div>
+    <div class="edit-form" style="display: none;">
+        <h3>Edit Form</h3>
+        <label for="adType">Advertising Type:</label>
+        <select id="adType" name="adType" required>
+            <option value="Cổ động chính trị">Cổ động chính trị</option>
+            <option value="Quảng cáo thương mại">Quảng cáo thương mại</option>
+            <option value="Xã hội hoá">Xã hội hoá</option>
+        </select>
+        <label for="locationType">Location Type:</label>
+        <select id="locationType" name="locationType" required>
+            <option value="Đất công">Đất công</option>
+            <option value="Đất tư nhân">Đất tư nhân</option>
+            <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+            <option value="Chợ">Chợ</option>
+            <option value="Cây xăng">Cây xăng</option>
+            <option value="Nhà chờ xe buýt">Nhà chờ xe buýt</option>
+        </select>
+        <label for="planningStatus">Đã quy hoạch chưa:</label>
+        <select id="planningStatus" name="planningStatus" required>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+        <label for="editDate">Ngày gửi</label>
+        <input type="date" id="editDate">
+        <label for="reason"></label>
+        <textarea id="reason"></textarea>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </div>
+    <div id="pagination" class="horizontal-pagination">
+        <button id="prev-page">Previous Page</button>
+        <div class="page-numbers"></div>
+        <button id="next-page">Next Page</button>
+    </div>
+
+</div>
+
+<script type="module" src="/MarkerEdit.js"></script>

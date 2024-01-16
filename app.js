@@ -8,7 +8,7 @@ const userRouter = require('./routes/user');
 const markerRouter = require('./routes/marker')
 const billboardRouter = require('./routes/billboard')
 const reportRouter = require('./routes/report')
-
+const editMarkerRouter = require('./routes/markerEdit')
 
 
 require('dotenv').config();
@@ -42,6 +42,7 @@ app.use("/api/user", userRouter);
 app.use("/api/marker", markerRouter)
 app.use("/api/billboard", billboardRouter);
 app.use("/api/report", reportRouter);
+app.use("/api/markerEdit", editMarkerRouter);
 
 
 app.engine('hbs', engine({
@@ -76,8 +77,16 @@ app.get('/user', (req, res) => {
 app.get('/report', function (req, res) {
   res.render('report', { title: 'Report' });
 });
+app.get('/markers', function (req, res) {
+  res.render('markers', { title: 'Danh sách điểm đặt quảng cáo' });
+});
+app.get('/billboard', function (req, res) {
+  res.render('billboard', { title: 'Danh sách bảng quảng cáo' });
+});
+
 
 
 app.listen(3030, function serverStartedHandler() {
   console.log('Web server is running at http://localhost:3030');
 });
+

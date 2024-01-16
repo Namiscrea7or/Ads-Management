@@ -34,9 +34,11 @@
     <textarea id="reportContent" name="reportContent" required></textarea><br>
 
     {{!-- <label for="reportImage">Hình ảnh minh hoạ (tối đa 2 hình):</label>
-    <input type="file" id="reportImage" name="reportImage" accept="image/*" multiple><br>
+    <input type="file" id="reportImage" name="reportImage" accept="image/*" multiple><br> --}}
 
-    <div id="captcha"> <!-- Thêm cơ chế captcha tại đây --></div> --}}
+    <div class="captcha">
+      <div class="g-recaptcha" data-sitekey="6LfLKFIpAAAAAIi8IqqAuNSmUNYoUKABA9n8jpoB"></div>
+    </div>
 
     <button type="submit">Gửi Báo Cáo</button>
   </form>
@@ -46,4 +48,5 @@
 
 <script type="module" src="/adsCheck.js"></script>
 <script type="module" src="/bbCheck.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script type="module" src="/mapDisplay.js"></script>

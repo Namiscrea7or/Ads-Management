@@ -140,7 +140,7 @@ function loadDataFromServer() {
   $.ajax({
     url: 'http://localhost:3030/api/marker/info',
     method: 'GET',
-    
+
     success: function (data) {
       console.log('Data loaded successfully:', data);
       updateMapWithMarkers(data.markerList);
@@ -169,8 +169,18 @@ function updateMapWithMarkers(data) {
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
 
-    var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-    marker.bindPopup(`<br>${location.address}`).on('click', function () {
+    var markerColor = location.planningStatus ? 'green' : 'red';
+    var marker = L.marker([location.latitude, location.longitude], {
+      icon: L.divIcon({
+        className: 'custom-marker',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        html: `<div class="marker-outer" style="border: 2px solid white; border-radius: 50%; overflow: hidden;">
+                <div class="marker-inner" style="background-color: ${markerColor}; border: 1px solid black; width: 100%; height: 100%;"></div>
+            </div>`,
+    }),
+    }).addTo(map);
+    marker.on('click', function () {
       currentLocation = location.address;
       console.log('địa chỉ hiện tại: ', currentLocation);
       if (rpBtnState === false) {
@@ -245,34 +255,45 @@ function billboardDetail(location) {
 }
 
 function showDetails(location) {
-  var detailsHTML = `<h3>Thông tin Điểm Đặt Quảng Cáo</h3>
-                       <p><strong>Địa chỉ:</strong> ${location.address}</p>
-                       <p><strong>Khu vực:</strong> Quận: ${location.ward}, Phường:${location.district}</p>
-                       <p><strong>Loại vị trí:</strong> ${location.locationType}</p>
-                       <p><strong>Loại quảng cáo:</strong> ${location.adType}</p>
-                       <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>`;
+  var detailsHTML = `<div class="main-container">
+                      <div class="details-container">
+                          <h3>Thông tin Điểm Đặt Quảng Cáo</h3>
+                          <p><strong>Địa chỉ:</strong> ${location.address}</p>
+                          <p><strong>Khu vực:</strong> Quận: ${location.ward}, Phường:${location.district}</p>
+                          <p><strong>Loại vị trí:</strong> ${location.locationType}</p>
+                          <p><strong>Loại quảng cáo:</strong> ${location.adType}</p>
+                          <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>
+                      `;
 
-  // Kiểm tra xem có hình ảnh hay không
-  if (location.image) {
-    detailsHTML += `<p><strong>Hình ảnh:</strong> <img src="${location.image}" alt="${location.address}" style="max-width: 100%; height: auto;"></p>`;
-  }
+// Kiểm tra xem có hình ảnh hay không
+if (location.image) {
+  detailsHTML += `
+                    <p><strong>Hình ảnh:</strong></p>
+                    <img src="${location.image}" alt="${location.address}" style="max-width: 100%; height: auto;">
+                  </div>`;
+}
 
-  // Kiểm tra xem có bảng quảng cáo hay không
-  if (location.billboards) {
-    detailsHTML += `<h3>Thông tin Bảng Quảng Cáo</h3>`;
-    detailsHTML += `<ul>`;
-    detailsHTML += `<li>
-                      <strong>Loại bảng:</strong> ${location.billboards.type}, 
-                      <strong>Kích thước:</strong> ${location.billboards.size}, 
-                      <strong>Ngày hết hạn:</strong> ${location.billboards.date}
-                      <br>
-                      <img src="${location.billboards.image}" alt="${location.billboards.address}" style="max-width: 100%; height: auto;">
-                  </li>`;
-    detailsHTML += `</ul>`;
-  }
+// Kiểm tra xem có bảng quảng cáo hay không
+if (location.billboards) {
+  detailsHTML += `<div class="billboard-container">
+                    <h3>Thông tin Bảng Quảng Cáo</h3>
+                    <ul>
+                      <li>
+                        <strong>Loại bảng:</strong> ${location.billboards.type}, 
+                        <strong>Kích thước:</strong> ${location.billboards.size}, 
+                        <strong>Ngày hết hạn:</strong> ${location.billboards.date}
+                        <br>
+                        <img src="${location.billboards.image}" alt="${location.billboards.address}" style="max-width: 100%; height: auto;">
+                      </li>
+                    </ul>
+                  </div>`;
+}
 
-  $('#details').html(detailsHTML);
-  detailsVisible = true;
+detailsHTML += `</div>`; // Đóng main-container
+
+$('#details').html(detailsHTML);
+detailsVisible = true;
+
 }
 
 function detailWhenClick(location) {
@@ -343,14 +364,14 @@ function submitForm() {
       reportProccessed: reportProccessed
     }),
   })
-  .then(response => response.json()) 
-  .then(data => {
+    .then(response => response.json())
+    .then(data => {
       console.log('Success:', data);
       alert('success')
       location.reload();
-  })
-  .catch(error => {
+    })
+    .catch(error => {
       alert('Error')
       console.error('Error:', error);
-  });
+    });
 }
