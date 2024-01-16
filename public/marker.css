@@ -1,0 +1,211 @@
+
+.button {
+    margin-top: 10px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 10px 20px; 
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; 
+}
+
+.edit-button {
+    color: #fff;
+    background-color: #007bff; 
+}
+
+.delete-button {
+    color: #fff;
+    background-color: #dc3545; 
+}
+
+.edit-button:hover,
+.delete-button:hover {
+    background-color: darken(currentColor, 10%); 
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); 
+}
+
+.edit-button:active,
+.delete-button:active {
+    transform: scale(0.9); 
+    box-shadow: none; 
+}
+
+
+
+.horizontal-pagination {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; 
+    justify-content: center;
+}
+
+
+
+#prev-page, #next-page {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}
+
+#prev-page:hover, #next-page:hover {
+    background-color: #ccc;
+}
+
+#prev-page:disabled, #next-page:disabled {
+    background-color: #ddd;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Style for the page numbers container */
+.page-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+/* Style for the page number */
+.page-number {
+    padding: 8px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Active page style */
+.page-number.active {
+    background-color: #007bff;
+    color: white;
+}
+
+
+
+.page-number {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 5px; 
+    cursor: pointer;
+}
+
+.edit-form {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px; 
+    margin: 20px 0;
+    text-align: center;
+}
+
+.edit-form h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.edit-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.edit-form select,
+.edit-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.edit-form button {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-form button:hover {
+    background-color: #0056b3;
+}
+
+.report-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    width: 150px;
+}
+
+.report-table th {
+    background-color: #f2f2f2;
+}
+
+.edit-form {
+    display: none;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+
+.edit-form h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+select, input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+
+input[type="date"] {
+    width: calc(100% - 16px);
+}
+
+textarea {
+    resize: vertical; 
+}

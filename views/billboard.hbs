@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="/marker.css">
+<div id="content-container">
+    <div id="user-details"></div>
+    <div class="edit-form" style="display: none;">
+        <h3>Edit Form</h3>
+        <label for="adType">Billboard Type:</label>
+        <select id="adType" name="adType" required>
+            <option value="Trụ bảng hiflex">Trụ bảng hiflex</option>
+            <option value="Trụ màn hình điện tử LED">Trụ màn hình điện tử LED</option>
+            <option value="Trụ hộp đèn">Trụ hộp đèn</option>
+            <option value="Bảng hiflex ốp tường">Bảng hiflex ốp tường</option>
+            <option value="Màn hình điện tử ốp tường">Màn hình điện tử ốp tường</option>
+            <option value="Trụ treo băng rôn dọc">Trụ treo băng rôn dọc</option>
+            <option value="Trụ treo băng rôn ngang">Trụ treo băng rôn ngang</option>
+            <option value="Trụ/Cụm pano">Trụ/Cụm pano</option>
+            <option value="Cổng chào">Cổng chào</option>
+            <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+        </select>
+        <label for="size">Billboard Size(dm2):</label>
+        <input type="text" id="size">
+        <label for="date">Hạn sử dụng</label>
+        <input type="date" id="date">
+        <label for="editDate">Ngày gửi</label>
+        <input type="date" id="editDate">
+        <label for="reason"></label>
+        <textarea id="reason"></textarea>
+        <button type="button" class="save-edit" onclick="submitForm()">Submit</button>
+    </div>
+    <div id="pagination" class="horizontal-pagination">
+        <button id="prev-page">Previous Page</button>
+        <div class="page-numbers"></div>
+        <button id="next-page">Next Page</button>
+    </div>
+
+</div>
+
+<script type="module" src="/billboardOfficer.js"></script>

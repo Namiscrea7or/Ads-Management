@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const BillboardSchema = new Schema({
+const BillboardEditSchema = new Schema({
     address: {
       type: String,
       required: true,
@@ -17,9 +17,17 @@ const BillboardSchema = new Schema({
     },
     date: {
       type: Date
+    },
+    editDate: {
+        type: Date,
+        required: true,
+    },
+    reason: {
+        type:String,
+        required: true
     }
   
   });
   
-  module.exports = mongoose.model("Billboard", BillboardSchema);
+  module.exports = mongoose.model("BillboardEdit", BillboardEditSchema);
   

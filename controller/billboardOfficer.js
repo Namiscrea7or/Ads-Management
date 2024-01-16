@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showMarkerCBP(accessToken) {
-    fetch('http://localhost:3030/api/marker/info_cbp', {
+    fetch('http://localhost:3030/api/billboard/info_cbp', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -49,7 +49,7 @@ function showMarkerCBP(accessToken) {
 }
 
 function showMarkerCBQ(accessToken) {
-    fetch('http://localhost:3030/api/marker/info_cbq', {
+    fetch('http://localhost:3030/api/billboard/info_cbq', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -61,7 +61,7 @@ function showMarkerCBQ(accessToken) {
 }
 
 function showMarkerCBS(accessToken) {
-    fetch('http://localhost:3030/api/markerEdit/info', {
+    fetch('http://localhost:3030/api/billboardEdit/info', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -86,7 +86,7 @@ function handleResponse(response) {
 function handleSuccess(response) {
     if (response.success) {
         console.log(response);
-        markers = response.markerList;
+        markers = response.bbList;
         renderMarkerInfo(markers);
     } else {
         console.log('error');
@@ -97,7 +97,7 @@ function handleSuccess(response) {
 function handleCBSSuccess(response) {
     if (response.success) {
         console.log(response);
-        markers = response.markerList;
+        markers = response.bbList;
         renderEditMarkerInfo(markers);
     } else {
         console.log('error');
@@ -125,9 +125,9 @@ function renderMarkerInfo(reports) {
         <thead>
             <tr>
                 <th>Address</th>
-                <th>Location Type</th>
-                <th>Advertisement Type</th>
-                <th>Planning Status</th>
+                <th>Billboard Type</th>
+                <th>Billboard size</th>
+                <th>Billboard Date</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -135,9 +135,9 @@ function renderMarkerInfo(reports) {
             ${reportsToDisplay.map((report, index) => `
                 <tr>
                     <td>${report.address}</td>
-                    <td>${report.locationType}</td>
-                    <td>${report.adType}</td>
-                    <td>${report.planningStatus}</td>
+                    <td>${report.type}</td>
+                    <td>${report.size}</td>
+                    <td>${report.date}</td>
                     <td class="button">
                         <button class="edit-button" data-index="${startIndex + index}">Gửi yêu cầu</button>
                     </td>
@@ -179,27 +179,28 @@ function renderEditMarkerInfo(reports) {
     const endIndex = startIndex + itemsPerPage;
     const reportsToDisplay = reports.slice(startIndex, endIndex);
     console.log(reportsToDisplay)
-
+    console.log('cbs type', reportsToDisplay[0].type)
+    console.log('cbs size', reportsToDisplay[0].size)
     const html = `
     <table class="report-table">
         <thead>
-            <tr>
-                <th>Address</th>
-                <th>Location Type</th>
-                <th>Advertisement Type</th>
-                <th>Planning Status</th>
-                <th>Sending Date</th>
-                <th>Reason</th>
-                <th>Action</th>
-            </tr>
+        <tr>
+        <th>Address</th>
+        <th>Billboard Type</th>
+        <th>Billboard size</th>
+        <th>Billboard Date</th>
+        <th>Sending Date</th>
+        <th>Reason</th>
+        <th>Action</th>
+    </tr>
         </thead>
         <tbody>
             ${reportsToDisplay.map((report, index) => `
                 <tr>
                     <td>${report.address}</td>
-                    <td>${report.locationType}</td>
-                    <td>${report.adType}</td>
-                    <td>${report.planningStatus}</td>
+                    <td>${report.type}</td>
+                    <td>${report.size}</td>
+                    <td>${report.date}</td>
                     <td>${report.editDate}</td>
                     <td>${report.reason}</td>
                     <td class="button">
@@ -244,7 +245,7 @@ function attachEditButtonListeners() {
         });
     });
     const cbsButton = document.querySelectorAll('.cbs');
-    if(cbsButton) {
+    if (cbsButton) {
         cbsButton.forEach((cbsBtn) => {
             cbsBtn.addEventListener('click', () => {
                 const reportIndex = parseInt(cbsBtn.getAttribute('data-index'), 10);
@@ -259,7 +260,7 @@ function attachDeleteButtonListeners() {
     deleteButtons.forEach((deleteButton) => {
         deleteButton.addEventListener('click', () => {
             const reportIndex = parseInt(deleteButton.getAttribute('data-index'), 10);
-            const confirmation = confirm('Are you sure you want to delete this report?');
+            const confirmation = confirm('Are you sure you want to delete this Billboard?');
             if (confirmation) {
                 console.log('có vô đây');
                 console.log('đây là ', markers[reportIndex].address);
@@ -272,7 +273,7 @@ function attachDeleteButtonListeners() {
 function deleteEditedMarker(reportContent, index) {
     console.log('có đi vô hàm này')
 
-    fetch(`http://localhost:3030/api/markerEdit/${reportContent}`, {
+    fetch(`http://localhost:3030/api/billboardEdit/${reportContent}`, {
         method: 'DELETE',
         headers: {
             'Authorization': accessToken,
@@ -292,9 +293,9 @@ function deleteEditedMarker(reportContent, index) {
 
 function showCBSEditForm(report, index) {
     const editForm = document.querySelector('.edit-form');
-    editForm.querySelector('#adType').value = report.adType;
-    editForm.querySelector('#locationType').value = report.locationType;
-    editForm.querySelector('#planningStatus').value = report.planningStatus;
+    editForm.querySelector('#adType').value = report.type;
+    editForm.querySelector('#size').value = report.size;
+    editForm.querySelector('#date').value = report.date;
     editForm.querySelector('#editDate').style.display = 'none';
     editForm.querySelector('label[for="editDate"]').style.display = 'none';
     editForm.querySelector('#reason').style.display = 'none';
@@ -308,9 +309,9 @@ function showCBSEditForm(report, index) {
 
 function showEditForm(report, index) {
     const editForm = document.querySelector('.edit-form');
-    editForm.querySelector('#adType').value = report.adType;
-    editForm.querySelector('#locationType').value = report.locationType;
-    editForm.querySelector('#planningStatus').value = report.planningStatus;
+    editForm.querySelector('#adType').value = report.type;
+    editForm.querySelector('#size').value = report.size;
+    editForm.querySelector('#date').value = report.date;
 
     editForm.style.display = 'block';
 
@@ -325,16 +326,16 @@ function saveEditedReport(report, index) {
 
     const updatedReport = {
         address: report.address,
-        adType: editForm.querySelector('#adType').value,
-        locationType: editForm.querySelector('#locationType').value,
-        planningStatus: editForm.querySelector('#planningStatus').value,
+        type: editForm.querySelector('#adType').value = report.type,
+        size: editForm.querySelector('#size').value = report.size,
+        date: editForm.querySelector('#date').value = report.date,
         editDate: editForm.querySelector('#editDate').value,
         reason: editForm.querySelector('#reason').value,
     };
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/markerEdit/marker`, {
+    fetch(`http://localhost:3030/api/billboardEdit/billboard`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -360,14 +361,14 @@ function saveEditedMarker(report, index) {
 
     const updatedReport = {
         address: report.address,
-        adType: editForm.querySelector('#adType').value,
-        locationType: editForm.querySelector('#locationType').value,
-        planningStatus: editForm.querySelector('#planningStatus').value,
+        type: editForm.querySelector('#adType').value = report.type,
+        size: editForm.querySelector('#size').value = report.size,
+        date: editForm.querySelector('#date').value = report.date,
     };
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/marker/update_marker`, {
+    fetch(`http://localhost:3030/api/billboard/update_billboard`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

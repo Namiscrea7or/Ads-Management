@@ -9,6 +9,7 @@ const markerRouter = require('./routes/marker')
 const billboardRouter = require('./routes/billboard')
 const reportRouter = require('./routes/report')
 const editMarkerRouter = require('./routes/markerEdit')
+const editBBRouter = require('./routes/billboardEdit')
 
 
 require('dotenv').config();
@@ -43,6 +44,7 @@ app.use("/api/marker", markerRouter)
 app.use("/api/billboard", billboardRouter);
 app.use("/api/report", reportRouter);
 app.use("/api/markerEdit", editMarkerRouter);
+app.use("/api/billboardEdit", editBBRouter);
 
 
 app.engine('hbs', engine({
