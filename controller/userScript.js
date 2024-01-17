@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (!accessToken) {
     console.error('Access token not found in localStorage.');
+    window.location.href = '/login';
     return;
   }
 
