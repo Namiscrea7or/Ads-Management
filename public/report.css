@@ -76,3 +76,17 @@
     background-color: #fff;
     color: #333;
 }
+
+.formContainer {
+    text-align: center;
+}
+
+#details {
+    display: flex;
+    justify-content: center;
+}
+
+#details div {
+    margin-bottom: 0;
+  }
+  

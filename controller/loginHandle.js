@@ -13,14 +13,20 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
             password: password,
         }),
     })
-    .then(response => response.json()) 
-    .then(data => {
-        console.log('Success:', data);
-        localStorage.setItem('accessToken', 'Bearer ' + data.accessToken);
-        window.location.href = '/user';
-    })
-    .catch(error => {
-        alert('Error')
-        console.error('Error:', error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.success === true) {
+                localStorage.setItem('accessToken', 'Bearer ' + data.accessToken);
+                window.location.href = '/user';
+            }
+            else {
+                alert('Error: ' + data.message);
+
+            }
+        })
+        .catch(error => {
+            alert('Error')
+            console.error('Error:', error);
+        });
 });

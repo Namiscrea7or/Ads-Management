@@ -39,6 +39,30 @@ router.post('/billboard', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/info', async (req, res) => {
+  try {
+    const markers = await Billboard.find();
+    const markerList =  markers.map((marker) => ({
+      address: marker.address,
+      type: marker.type,
+      size: marker.size,
+      date: marker.date,
+      isActivated: marker.isActivated
+    }));
+
+    res.json({
+      success: true,
+      bbList: markerList,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
 function extractAddressInfo(address) {
     var parts = address.split(',');
     var ward = '';
@@ -154,16 +178,16 @@ function extractAddressInfo(address) {
         });
       }
   
-      const { address, type, size, date } = req.body;
-      if (!address || !type || !size || !date) {
-        return res.status(200).json({
-          success: false,
-          message: "Invalid or missing information!",
-        });
-      }
+      const { address, type, size, date, isActivated } = req.body;
+      // if (!address || !type || !size || !date || !isActivated) {
+      //   return res.status(200).json({
+      //     success: false,
+      //     message: "Invalid or missing information!",
+      //   });
+      // }
   
       const updatedUser = {
-        address, type, size, date
+        address, type, size, date, isActivated
       };
   
       const userUpdatePrice = { address };

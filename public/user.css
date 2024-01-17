@@ -224,3 +224,79 @@ h1 {
     box-shadow: none; 
   }
   
+
+  .horizontal-pagination {
+    display: flex;
+    align-items: center;
+    margin-top: 10px; 
+    justify-content: center;
+}
+
+
+
+#prevPageCBP, #nextPageCBP {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}
+
+#prevPageCBP:hover, #nextPageCBP:hover {
+    background-color: #ccc;
+}
+
+#prevPageCBP:disabled, #nextPageCBP:disabled {
+    background-color: #ddd;
+    color: #333;
+    cursor: not-allowed;
+}
+
+#prevPageCBQ, #nextPageCBQ {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}
+
+#prevPageCBQ:hover, #nextPageCBQ:hover {
+    background-color: #ccc;
+}
+
+#prevPageCBQ:disabled, #nextPageCBQ:disabled {
+    background-color: #ddd;
+    color: #333;
+    cursor: not-allowed;
+}
+
+#prevPageGuests, #nextPageGuests {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    color: black;
+    border: none;
+    border-radius: 5px;
+}
+
+#prevPageGuests:hover, #nextPageGuests:hover {
+    background-color: #ccc;
+}
+
+#prevPageGuests:disabled, #nextPageGuests:disabled {
+    background-color: #ddd;
+    color: #333;
+    cursor: not-allowed;
+}
+
+
+
+
+
+
+

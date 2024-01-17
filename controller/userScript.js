@@ -35,8 +35,9 @@ async function fetchUserInfo(accessToken) {
 function handleResponse(response) {
   if (!response.ok) {
     console.error(`HTTP error! Status: ${response.status}`);
-    return response.text().then(html => {
-      console.error('HTML Content:', html);
+    return response.json().then(data => {
+      console.error('JSON Content:', data);
+      alert('Error: ' + data.message);
       throw new Error('Non-JSON response received.');
     });
   }
@@ -327,7 +328,10 @@ function clearOtherLists() {
   const paginationCbq = document.getElementById('pagination-controls-cbq')
   const paginationGuest = document.getElementById('pagination-controls-guests')
   if(createAcc)
+  {
     createAcc.innerHTML = '';
+    createAcc.style.display = 'none'
+  }
   paginationGuest.innerHTML = '';
   paginationCbp.innerHTML = '';
   paginationCbq.innerHTML = '';

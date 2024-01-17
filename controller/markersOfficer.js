@@ -363,6 +363,7 @@ function saveEditedMarker(report, index) {
         adType: editForm.querySelector('#adType').value,
         locationType: editForm.querySelector('#locationType').value,
         planningStatus: editForm.querySelector('#planningStatus').value,
+        isActivated: report.isActivated
     };
 
     console.log(updatedReport);

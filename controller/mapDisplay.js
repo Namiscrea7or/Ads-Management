@@ -138,7 +138,7 @@ function showReportForm(locationData) {
 var accessToken = localStorage.getItem('accessToken')
 function loadDataFromServer() {
   console.log('Loading data from server');
-  if(userRole === 'Cán bộ Phường') {
+  if (userRole === 'Cán bộ Phường') {
     $.ajax({
       url: 'http://localhost:3030/api/marker/info_cbp',
       method: 'GET',
@@ -154,7 +154,7 @@ function loadDataFromServer() {
       }
     });
   }
-  else if(userRole === 'Cán bộ Quận') {
+  else if (userRole === 'Cán bộ Quận') {
     $.ajax({
       url: 'http://localhost:3030/api/marker/info_cbq',
       method: 'GET',
@@ -174,7 +174,7 @@ function loadDataFromServer() {
     $.ajax({
       url: 'http://localhost:3030/api/marker/info',
       method: 'GET',
-  
+
       success: function (data) {
         console.log('Data loaded successfully:', data);
         updateMapWithMarkers(data.markerList);
@@ -203,59 +203,59 @@ function updateMapWithMarkers(data) {
 
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
-    if(location.isActivated) {
+    if (location.isActivated) {
       var markerColor = location.planningStatus ? 'green' : 'red';
-    var marker = L.marker([location.latitude, location.longitude], {
-      icon: L.divIcon({
-        className: 'custom-marker',
-        iconSize: [30, 30],
-        iconAnchor: [15, 30],
-        html: `<div class="marker-outer" style="border: 2px solid white; border-radius: 50%; overflow: hidden;">
+      var marker = L.marker([location.latitude, location.longitude], {
+        icon: L.divIcon({
+          className: 'custom-marker',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          html: `<div class="marker-outer" style="border: 2px solid white; border-radius: 50%; overflow: hidden;">
                 <div class="marker-inner" style="background-color: ${markerColor}; border: 1px solid black; width: 100%; height: 100%;"></div>
             </div>`,
-    }),
-    }).addTo(map);
-    marker.on('click', function () {
-      currentLocation = location.address;
-      console.log('địa chỉ hiện tại: ', currentLocation);
-      if (rpBtnState === false) {
-        $('#reportButton').css('display', 'block');
-        rpBtnState = true;
-      } else {
-        $('#reportButton').css('display', 'none');
-        rpBtnState = false;
-      }
-      adsCheckButton.style.display = 'none';
-      if (detailsVisible) {
-        hideDetails();
-        BbButton.style.display = 'none';
-      } else {
-        showDetails(location);
-        if (location.planningStatus === true) {
-          if (!(location.billboards && location.billboards.length > 0)) {
-            if (userRole === 'Cán bộ Sở' || userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Quận') {
-              BbButton.style.display = 'block';
+        }),
+      }).addTo(map);
+      marker.on('click', function () {
+        currentLocation = location.address;
+        console.log('địa chỉ hiện tại: ', currentLocation);
+        if (rpBtnState === false) {
+          $('#reportButton').css('display', 'block');
+          rpBtnState = true;
+        } else {
+          $('#reportButton').css('display', 'none');
+          rpBtnState = false;
+        }
+        adsCheckButton.style.display = 'none';
+        if (detailsVisible) {
+          hideDetails();
+          BbButton.style.display = 'none';
+        } else {
+          showDetails(location);
+          if (location.planningStatus === true) {
+            if (!(location.billboards && location.billboards.length > 0)) {
+              if (userRole === 'Cán bộ Sở' || userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Quận') {
+                BbButton.style.display = 'block';
+              }
+              else {
+                BbButton.style.display = 'none';
+              }
+              BbButton.addEventListener('click', function () {
+                console.log('Button clicked for location:', location);
+                // Remove the previous billboard form before adding a new one
+                if (currentBillboardForm) {
+                  currentBillboardForm.remove();
+                }
+
+                billboardDetail(location);
+                BbButton.style.display = 'none';
+              });
             }
             else {
               BbButton.style.display = 'none';
             }
-            BbButton.addEventListener('click', function () {
-              console.log('Button clicked for location:', location);
-              // Remove the previous billboard form before adding a new one
-              if (currentBillboardForm) {
-                currentBillboardForm.remove();
-              }
-
-              billboardDetail(location);
-              BbButton.style.display = 'none';
-            });
-          }
-          else {
-            BbButton.style.display = 'none';
           }
         }
-      }
-    });
+      });
     }
   });
 }
@@ -301,17 +301,18 @@ function showDetails(location) {
                           <p><strong>Thông tin quy hoạch:</strong> ${location.planningStatus ? "Đã quy hoạch" : "Chưa quy hoạch"}</p>
                       `;
 
-// Kiểm tra xem có hình ảnh hay không
-if (location.image) {
-  detailsHTML += `
+  // Kiểm tra xem có hình ảnh hay không
+  if (location.image) {
+    detailsHTML += `
                     <p><strong>Hình ảnh:</strong></p>
                     <img src="${location.image}" alt="${location.address}" style="max-width: 100%; height: auto;">
                   </div>`;
-}
+  }
 
-// Kiểm tra xem có bảng quảng cáo hay không
-if (location.billboards && location.billboards.isActivated) {
-  detailsHTML += `<div class="billboard-container">
+  // Kiểm tra xem có bảng quảng cáo hay không
+  console.log(location.billboards && location.billboards.isActivated);
+  if (location.billboards && location.billboards.isActivated) {
+    detailsHTML += `<div class="billboard-container">
                     <h3>Thông tin Bảng Quảng Cáo</h3>
                     <ul>
                       <li>
@@ -323,20 +324,24 @@ if (location.billboards && location.billboards.isActivated) {
                       </li>
                     </ul>
                   </div>`;
-}
+  }
 
-detailsHTML += `</div>`; // Đóng main-container
+  detailsHTML += `</div>`; // Đóng main-container
 
-$('#details').html(detailsHTML);
-detailsVisible = true;
+  $('#details').html(detailsHTML);
+  detailsVisible = true;
 
 }
 
 function detailWhenClick(location) {
-  var detailsHTML = `<h3>Thông tin Địa Điểm</h3>
-                     <p><strong>Địa chỉ:</strong> ${location.address}</p>`;
+  var detailsHTML = `
+    <div>
+      <h3>Thông tin Địa Điểm</h3>
+      <p><strong>Địa chỉ:</strong> ${location.address}</p>
+    </div>`;
   $('#details').html(detailsHTML);
 }
+
 
 function hideDetails() {
   $('#details').html('');
@@ -385,17 +390,17 @@ function drawWardOutline(district) {
 
 var address = localStorage.getItem('address')
 var uward, udistrict;
-if(address) {
-  var {ward: uward, district: udistrict} = extractAddressInfo(address)
+if (address) {
+  var { ward: uward, district: udistrict } = extractAddressInfo(address)
 }
 
 console.log('tên ward', uward, 'tên district', udistrict)
 
 function initializeMap() {
-  if(userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Sở') {
+  if (userRole === 'Cán bộ Phường' || userRole === 'Cán bộ Sở') {
     drawWardOutline('District ' + udistrict);
   }
-  else if(userRole === 'Cán bộ Quận') {
+  else if (userRole === 'Cán bộ Quận') {
     drawWardOutline('Ward ' + uward, 'District ' + udistrict);
   }
   loadDataFromServer();

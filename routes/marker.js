@@ -208,17 +208,21 @@ router.put("/update_marker", verifyToken, async (req, res) => {
       });
     }
 
-    const { address, locationType, adType, planningStatus } = req.body;
-    if (!address || !locationType || !adType || !planningStatus) {
-      return res.status(200).json({
-        success: false,
-        message: "Invalid or missing information!",
-      });
-    }
+    
+
+    const { address, locationType, adType, planningStatus, isActivated } = req.body;
+    console.log(address, locationType, adType, planningStatus, isActivated);
+    // if (!address || !locationType || !adType || !planningStatus || !isActivated) {
+    //   return res.status(200).json({
+    //     success: false,
+    //     message: "Invalid or missing information!",
+    //   });
+    // }
 
     const updatedUser = {
-      address, locationType, adType, planningStatus
+      address, locationType, adType, planningStatus, isActivated
     };
+
 
     const userUpdatePrice = { address };
     const isUpdatedUser = await Marker.findOneAndUpdate(

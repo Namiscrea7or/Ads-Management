@@ -85,6 +85,12 @@ app.get('/markers', function (req, res) {
 app.get('/billboard', function (req, res) {
   res.render('billboard', { title: 'Danh sách bảng quảng cáo' });
 });
+app.get('/manageMarker', function (req, res) {
+  res.render('manageMarker', { title: 'Quản lí điểm quảng cáo' });
+});
+app.get('/manageBillboard', function (req, res) {
+  res.render('manageBillboard', { title: 'Quản lí Bảng quảng cáo' });
+});
 
 
 
