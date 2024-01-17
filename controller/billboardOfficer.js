@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showMarkerCBP(accessToken) {
-    fetch('http://localhost:3030/api/billboard/info_cbp', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboard/info_cbp', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -64,7 +64,7 @@ function showMarkerCBP(accessToken) {
 }
 
 function showMarkerCBQ(accessToken) {
-    fetch('http://localhost:3030/api/billboard/info_cbq', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboard/info_cbq', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -76,7 +76,7 @@ function showMarkerCBQ(accessToken) {
 }
 
 function showMarkerCBS(accessToken) {
-    fetch('http://localhost:3030/api/billboardEdit/info', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboardEdit/info', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -288,7 +288,7 @@ function attachDeleteButtonListeners() {
 function deleteEditedMarker(reportContent, index) {
     console.log('có đi vô hàm này')
 
-    fetch(`http://localhost:3030/api/billboardEdit/${reportContent}`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/billboardEdit/${reportContent}`, {
         method: 'DELETE',
         headers: {
             'Authorization': accessToken,
@@ -350,7 +350,7 @@ function saveEditedReport(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/billboardEdit/billboard`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/billboardEdit/billboard`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -384,7 +384,7 @@ function saveEditedMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/billboard/update_billboard`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/billboard/update_billboard`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

@@ -24,7 +24,7 @@ window.submitForm = function () {
   
     console.log(locationData)
   
-    fetch('http://localhost:3030/api/marker/marker', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/marker/marker', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ window.submitForm = function () {
   
     console.log(locationData)
   
-    fetch('http://localhost:3030/api/marker/marker', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/marker/marker', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

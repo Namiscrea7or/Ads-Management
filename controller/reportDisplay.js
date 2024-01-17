@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showCBSrp(accessToken) {
-    fetch('http://localhost:3030/api/report/info', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/report/info', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -52,7 +52,7 @@ function showCBSrp(accessToken) {
 }
 
 function showCBPrp(accessToken) {
-    fetch('http://localhost:3030/api/report/info_cbp', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/report/info_cbp', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -64,7 +64,7 @@ function showCBPrp(accessToken) {
 }
 
 function showCBQrp(accessToken) {
-    fetch('http://localhost:3030/api/report/info_cbq', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/report/info_cbq', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -223,7 +223,7 @@ function saveEditedReport(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/report/update_report`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/report/update_report`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ function deleteReport(reportContent, index) {
         console.error('Error: Reports array is not properly initialized.');
         return;
     }
-    fetch(`http://localhost:3030/api/report/${reportContent}`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/report/${reportContent}`, {
         method: 'DELETE',
         headers: {
             'Authorization': accessToken,

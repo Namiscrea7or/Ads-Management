@@ -140,7 +140,7 @@ function loadDataFromServer() {
   console.log('Loading data from server');
   if (userRole === 'Cán bộ Phường') {
     $.ajax({
-      url: 'http://localhost:3030/api/marker/info_cbp',
+      url: 'https://adsmanagement-pdrm.onrender.com/api/marker/info_cbp',
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -156,7 +156,7 @@ function loadDataFromServer() {
   }
   else if (userRole === 'Cán bộ Quận') {
     $.ajax({
-      url: 'http://localhost:3030/api/marker/info_cbq',
+      url: 'https://adsmanagement-pdrm.onrender.com/api/marker/info_cbq',
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -172,7 +172,7 @@ function loadDataFromServer() {
   }
   else {
     $.ajax({
-      url: 'http://localhost:3030/api/marker/info',
+      url: 'https://adsmanagement-pdrm.onrender.com/api/marker/info',
       method: 'GET',
 
       success: function (data) {
@@ -451,7 +451,7 @@ function submitForm() {
   const reporterPhone = document.getElementById('reporterPhone').value;
   const reportContent = document.getElementById('reportContent').value;
   const reportProccessed = 'Chưa xử lý';
-  fetch('http://localhost:3030/api/report/create', {
+  fetch('https://adsmanagement-pdrm.onrender.com/api/report/create', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

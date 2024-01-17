@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function fetchUserInfo(accessToken) {
   try {
-    const response = await fetch('http://localhost:3030/api/user/info', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/user/info', {
       method: 'GET',
       headers: {
         'Authorization': accessToken
@@ -297,7 +297,7 @@ function showCreateAccountForm(role) {
     formData.append('address', addressInput.value);
     console.log('form data: ', formData.get('address'));
 
-    fetch('http://localhost:3030/api/auth/register_CB', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/auth/register_CB', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -361,7 +361,7 @@ function createWardOfficerAccount() {
 
 async function showWardOfficers() {
   try {
-    const response = await fetch('http://localhost:3030/api/user/get_cbp_list', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/user/get_cbp_list', {
       method: 'GET',
       headers: {
         'Authorization': accessToken
@@ -451,7 +451,7 @@ wardOfficersElement.innerHTML = html;
 
 async function showDistrictOfficers() {
   try {
-    const response = await fetch('http://localhost:3030/api/user/get_cbq_list', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/user/get_cbq_list', {
       method: 'GET',
       headers: {
         'Authorization': accessToken
@@ -539,7 +539,7 @@ function renderDistrictOfficers(districtOfficers) {
 
 async function showGuests() {
   try {
-    const response = await fetch('http://localhost:3030/api/user/get_guest_list', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/user/get_guest_list', {
       method: 'GET',
       headers: {
         'Authorization': accessToken
@@ -682,7 +682,7 @@ async function saveEditedReport(report, index) {
   console.log(updatedUser);
 
   try {
-    const response = await fetch(`http://localhost:3030/api/user/update_user`, {
+    const response = await fetch(`https://adsmanagement-pdrm.onrender.com/api/user/update_user`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -708,7 +708,7 @@ async function saveEditedReport(report, index) {
 async function deleteReport(email, index) {
   try {
     console.log(email);
-    const response = await fetch(`http://localhost:3030/api/user/${email}`, {
+    const response = await fetch(`https://adsmanagement-pdrm.onrender.com/api/user/${email}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -730,7 +730,7 @@ async function deleteReport(email, index) {
 
 async function showCBPrp() {
   try {
-    const response = await fetch('http://localhost:3030/api/report/info_cbp', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/report/info_cbp', {
       method: 'GET',
       headers: {
         'Authorization': accessToken
@@ -746,7 +746,7 @@ async function showCBPrp() {
 
 async function showCBQrp() {
   try {
-    const response = await fetch('http://localhost:3030/api/report/info_cbq', {
+    const response = await fetch('https://adsmanagement-pdrm.onrender.com/api/report/info_cbq', {
       method: 'GET',
       headers: {
         'Authorization': accessToken

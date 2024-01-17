@@ -19,7 +19,7 @@ window.submitBBForm = function () {
   
     console.log('Billboard: ', locationData)
   
-    fetch('http://localhost:3030/api/billboard/billboard', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboard/billboard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ window.submitBBForm = function () {
   
     console.log('Billboard: ', locationData)
   
-    fetch('http://localhost:3030/api/billboard/billboard', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboard/billboard', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -104,7 +104,7 @@ if (registerForm) {
     const dob = document.getElementById('registerDob').value;
     const phoneNumber = document.getElementById('registerPhoneNumber').value;
 
-    fetch('http://localhost:3030/api/auth/register', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showMarkerCBS(accessToken) {
-    fetch('http://localhost:3030/api/marker/info', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/marker/info', {
         method: 'GET',
     })
         .then(handleResponse)
@@ -166,7 +166,7 @@ function saveRemoveMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/marker/update_marker`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/marker/update_marker`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ function saveEditedMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/marker/update_marker`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/marker/update_marker`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showMarkerCBS(accessToken) {
-    fetch('http://localhost:3030/api/billboard/info', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/billboard/info', {
         method: 'GET',
     })
         .then(handleResponse)
@@ -166,7 +166,7 @@ function saveRemoveMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/billboard/update_billboard`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/billboard/update_billboard`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ function saveEditedMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/billboard/update_billboard`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/billboard/update_billboard`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

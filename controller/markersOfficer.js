@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function showMarkerCBP(accessToken) {
-    fetch('http://localhost:3030/api/marker/info_cbp', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/marker/info_cbp', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -49,7 +49,7 @@ function showMarkerCBP(accessToken) {
 }
 
 function showMarkerCBQ(accessToken) {
-    fetch('http://localhost:3030/api/marker/info_cbq', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/marker/info_cbq', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -61,7 +61,7 @@ function showMarkerCBQ(accessToken) {
 }
 
 function showMarkerCBS(accessToken) {
-    fetch('http://localhost:3030/api/markerEdit/info', {
+    fetch('https://adsmanagement-pdrm.onrender.com/api/markerEdit/info', {
         method: 'GET',
         headers: {
             'Authorization': accessToken
@@ -272,7 +272,7 @@ function attachDeleteButtonListeners() {
 function deleteEditedMarker(reportContent, index) {
     console.log('có đi vô hàm này')
 
-    fetch(`http://localhost:3030/api/markerEdit/${reportContent}`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/markerEdit/${reportContent}`, {
         method: 'DELETE',
         headers: {
             'Authorization': accessToken,
@@ -334,7 +334,7 @@ function saveEditedReport(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/markerEdit/marker`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/markerEdit/marker`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -368,7 +368,7 @@ function saveEditedMarker(report, index) {
 
     console.log(updatedReport);
 
-    fetch(`http://localhost:3030/api/marker/update_marker`, {
+    fetch(`https://adsmanagement-pdrm.onrender.com/api/marker/update_marker`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
