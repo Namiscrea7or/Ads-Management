@@ -204,14 +204,24 @@ function updateMapWithMarkers(data) {
   data.forEach(function (location) {
     console.log('Adding marker for location:', location);
     if (location.isActivated) {
+      console.log('đafafs', location.billboards)
       var markerColor = location.planningStatus ? 'green' : 'red';
+      var hasBillboards;
+      if(location.billboards)
+      {
+        hasBillboards = true;
+      }
+      else {
+        hasBillboards = false;
+      }
+      var outerCircleColor = hasBillboards ? 'blue' : 'transparent'; 
+
       var marker = L.marker([location.latitude, location.longitude], {
         icon: L.divIcon({
           className: 'custom-marker',
           iconSize: [30, 30],
           iconAnchor: [15, 30],
-          html: `<div class="marker-outer" style="border: 2px solid white; border-radius: 50%; overflow: hidden;">
-                <div class="marker-inner" style="background-color: ${markerColor}; border: 1px solid black; width: 100%; height: 100%;"></div>
+          html: `<div class="marker-inner" style="background-color: ${markerColor}; border: 2px solid ${outerCircleColor}; width: 100%; height: 100%;"></div>
             </div>`,
         }),
       }).addTo(map);
