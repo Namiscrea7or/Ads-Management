@@ -7,14 +7,6 @@ const adsMarkerSchema = new Schema({
     type: String,
     required: true,
   },
-  ward: {
-    type: String,
-    required: true,
-  },
-  district: {
-    type: String,
-    required: true,
-  },
   locationType: {
     type: String,
     enum: ["Đất công", "Đất tư nhân", "Trung tâm thương mại", "Chợ", "Cây xăng", "Nhà chờ xe buýt"],

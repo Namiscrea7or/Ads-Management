@@ -6,15 +6,30 @@ let markers = []
 document.getElementById('pagination').addEventListener('click', (event) => {
     if (event.target.id === 'prev-page' && currentPage > 1) {
         currentPage--;
-        renderMarkerInfo(markers);
+        if(role != 'Cán bộ Sở') {
+            renderMarkerInfo(markers);
+        }
+        else {
+            renderEditMarkerInfo(markers);
+        }
     } else if (event.target.classList.contains('page-number')) {
         currentPage = parseInt(event.target.textContent, 10);
-        renderMarkerInfo(markers);
+        if(role != 'Cán bộ Sở') {
+            renderMarkerInfo(markers);
+        }
+        else {
+            renderEditMarkerInfo(markers);
+        }
     } else if (event.target.id === 'next-page') {
         const totalPages = Math.ceil(markers.length / itemsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
-            renderMarkerInfo(markers);
+            if(role != 'Cán bộ Sở') {
+                renderMarkerInfo(markers);
+            }
+            else {
+                renderEditMarkerInfo(markers);
+            }
         }
     }
 });

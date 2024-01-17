@@ -7,8 +7,6 @@ const User = require("../models/user");
 router.post('/marker', verifyToken, async (req, res) => {
     const {
         address,
-        ward,
-        district,
         locationType,
         adType,
         // image,
@@ -27,8 +25,6 @@ router.post('/marker', verifyToken, async (req, res) => {
 
         const newMarker = new Marker({
             address,
-            ward,
-            district,
             locationType,
             adType,
             // image,

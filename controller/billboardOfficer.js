@@ -184,6 +184,13 @@ function renderMarkerInfo(reports) {
     attachEditButtonListeners();
 }
 
+function formatDate(date) {
+    let tmp = new Date(date);
+    tmp = tmp.toLocaleDateString();
+    console.log(tmp)
+    return tmp
+}
+
 function renderEditMarkerInfo(reports) {
     const contentContainer = document.getElementById('content-container');
     const userDetailsElement = document.getElementById('user-details');
@@ -216,7 +223,7 @@ function renderEditMarkerInfo(reports) {
                     <td>${report.type}</td>
                     <td>${report.size}</td>
                     <td>${report.date}</td>
-                    <td>${report.editDate}</td>
+                    <td>${formatDate(report.editDate)}</td>
                     <td>${report.reason}</td>
                     <td class="button">
                         <button class="edit-button cbs" data-index="${startIndex + index}">Duyệt</button>

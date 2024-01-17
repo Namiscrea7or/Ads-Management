@@ -16,8 +16,6 @@ window.submitForm = function () {
       latitude: document.getElementById('latitude').value,
       longitude: document.getElementById('longitude').value,
       address: document.getElementById('reportedAddress').value,
-      ward: document.getElementById('reportedWard').value,
-      district: document.getElementById('reportedDistrict').value,
       planningStatus: document.getElementById('planningStatus').value,
       isActivated: true
     };
@@ -50,8 +48,6 @@ window.submitForm = function () {
       latitude: document.getElementById('latitude').value,
       longitude: document.getElementById('longitude').value,
       address: document.getElementById('reportedAddress').value,
-      ward: document.getElementById('reportedWard').value,
-      district: document.getElementById('reportedDistrict').value,
       planningStatus: document.getElementById('planningStatus').value,
       isActivated: false
     };
